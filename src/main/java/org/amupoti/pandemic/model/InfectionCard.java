@@ -36,4 +36,8 @@ public class InfectionCard {
     public boolean isInTheGame() {
         return !destroyed && !inBox6 && inNetwork;
     }
+
+    public boolean isSoulless() {
+        return cityName.contains("Desalmados");
+    }
 }

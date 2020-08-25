@@ -2,6 +2,8 @@ package org.amupoti.pandemic.model;
 
 import lombok.Value;
 
+import static java.util.function.Predicate.not;
+
 @Value
 public class EpidemicStatusData {
 
@@ -13,7 +15,7 @@ public class EpidemicStatusData {
     public EpidemicStatusData(InfectionDeckData infectionDeckData) {
         int currentEpidemicNumber = infectionDeckData.getCurrentEpidemic();
         this.currentEpidemic = formatEpidemic(currentEpidemicNumber);
-        turnsSinceLastEpidemic = computeTurns(currentEpidemicNumber, infectionDeckData.getInfectionCardsInCurrentEpidemic().getCardsInEpidemic().size());
+        turnsSinceLastEpidemic = computeTurns(currentEpidemicNumber, infectionDeckData.getInfectionCardsInCurrentEpidemic());
         infectionRate = InfectionRate.getRateForEpidemic(currentEpidemicNumber);
     }
 
@@ -24,7 +26,10 @@ public class EpidemicStatusData {
         return "" + currentEpidemic;
     }
 
-    private int computeTurns(int currentEpidemic, int infectionCardsInCurrentEpidemic) {
-        return infectionCardsInCurrentEpidemic / InfectionRate.getRateForEpidemic(currentEpidemic);
+    private int computeTurns(int currentEpidemic, InfectionSet infectionCardsInCurrentEpidemic) {
+        int cards = (int) infectionCardsInCurrentEpidemic.getCardsInEpidemic().stream()
+                .filter(not(InfectionCard::isSoulless))
+                .count();
+        return cards / InfectionRate.getRateForEpidemic(currentEpidemic);
     }
 }

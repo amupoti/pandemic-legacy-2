@@ -20,6 +20,10 @@ public class InfectionCardFactory {
     private static final List<String> yellowCities = Arrays.asList(
             "Sao Paulo", "Lima", "Dar es-Salam", "Lagos", "Santiago",
             "Ciudad de Mexico", "Jacksonville", "Jartum", "Buenos Aires", "Los Angeles");
+    public static final String LIGHT_BLUE = "#9999f9";
+    public static final String GREY = "#c7c5c5";
+    public static final String YELLOW = "#f3f3a3";
+    public static final String LIGHT_GREEN = "#b3ffb3";
 
     /**
      * Row structure in the google sheet is the following:
@@ -40,9 +44,10 @@ public class InfectionCardFactory {
 
     private static String getColorForCityName(String cityName) {
         String cityWithoutDigits = cityName.replaceAll("\\d", "").trim();
-        if (blueCities.contains(cityWithoutDigits)) return "#9999f9";
-        if (blackCities.contains(cityWithoutDigits)) return "#c7c5c5";
-        if (yellowCities.contains(cityWithoutDigits)) return "#f3f3a3";
+        if (blueCities.contains(cityWithoutDigits)) return LIGHT_BLUE;
+        if (blackCities.contains(cityWithoutDigits)) return GREY;
+        if (yellowCities.contains(cityWithoutDigits)) return YELLOW;
+        if (cityName.contains("Desalmados")) return LIGHT_GREEN;
         return "white";
     }
 
