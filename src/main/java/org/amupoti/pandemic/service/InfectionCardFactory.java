@@ -16,10 +16,11 @@ public class InfectionCardFactory {
             "San Francisco", "New York", "Washington", "Frankfurt", "Londres", "Paris",
             "Denver", "Chicago", "San Petersburgo", "Johannesburgo");
     private static final List<String> blackCities = Arrays.asList(
-            "El Cairo", "Istambul", "Antananarivo", "Tripoli", "Moscú");
+            "El Cairo", "Estambul", "Antananarivo", "Tripoli", "Moscú", "Bagdad", "Bombay");
     private static final List<String> yellowCities = Arrays.asList(
             "Sao Paulo", "Lima", "Dar es-Salam", "Lagos", "Santiago",
-            "Ciudad de Mexico", "Jacksonville", "Jartum", "Buenos Aires", "Los Angeles");
+            "Ciudad de Mexico", "Jacksonville", "Jartum", "Buenos Aires", "Los Angeles",
+            "Bogota", "Kinsasa");
     public static final String LIGHT_BLUE = "#9999f9";
     public static final String GREY = "#c7c5c5";
     public static final String YELLOW = "#f3f3a3";
@@ -32,7 +33,7 @@ public class InfectionCardFactory {
 
         log.info(Arrays.toString(row.toArray()));
         String cityName = (String) row.get(0);
-        String label = (String) row.get(1);
+        String label = buildLabel((String) row.get(1));
         Boolean inNetwork = parseBoolean(row.get(2));
         Boolean destroyed = parseBoolean(row.get(3));
         Boolean inBox6 = parseBoolean(row.get(4));
@@ -40,6 +41,11 @@ public class InfectionCardFactory {
 
         InfectionCardAppearances infectionCardAppearances = InfectionCardAppearances.fromRow(row);
         return new InfectionCard(cityName, label, inNetwork, destroyed, inBox6, infectionCardAppearances, color);
+    }
+
+    private static String buildLabel(String label) {
+        if (label != null && !label.isEmpty()) return "(" + label + ")";
+        else return label;
     }
 
     private static String getColorForCityName(String cityName) {

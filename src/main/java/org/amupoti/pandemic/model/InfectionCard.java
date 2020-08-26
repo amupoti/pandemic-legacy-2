@@ -29,7 +29,7 @@ public class InfectionCard {
 
     public String shortPrint() {
         String cardInfo = cityName;
-        if (label != null && !label.isEmpty()) cardInfo += "(" + label + ")";
+        if (label != null && !label.isEmpty()) cardInfo += label;
         return cardInfo;
     }
 

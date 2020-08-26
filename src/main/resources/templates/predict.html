@@ -64,7 +64,8 @@
         <td>
             <table>
                 <tr th:each="card: ${infectionSet.cardsInEpidemic}">
-                    <td th:text="${card.cityName}" th:style="'background:'+${card.color}"></td>
+                    <td th:text="${card.cityName} + ' '+ ${card.label}"
+                        th:style="'background:'+${card.color}"></td>
                 </tr>
             </table>
 
