@@ -14,17 +14,22 @@ public class InfectionCardFactory {
 
     private static final List<String> blueCities = Arrays.asList(
             "San Francisco", "New York", "Washington", "Frankfurt", "Londres", "Paris",
-            "Denver", "Chicago", "San Petersburgo", "Johannesburgo");
+            "Denver", "Chicago", "San Petersburgo", "Johannesburgo", "Montreal", "Essen", "Milan", "Atlanta", "Madrid", "");
     private static final List<String> blackCities = Arrays.asList(
-            "El Cairo", "Estambul", "Antananarivo", "Tripoli", "Moscú", "Bagdad", "Bombay");
+            "El Cairo", "Estambul", "Antananarivo", "Tripoli", "Moscú", "Bagdad", "Bombay", "Teheran", "Riad", "Calcuta",
+            "Argel", "Karachi", "Nueva Delhi");
     private static final List<String> yellowCities = Arrays.asList(
             "Sao Paulo", "Lima", "Dar es-Salam", "Lagos", "Santiago",
             "Ciudad de Mexico", "Jacksonville", "Jartum", "Buenos Aires", "Los Angeles",
-            "Bogota", "Kinsasa");
+            "Bogota", "Kinsasa", "Miami", "Los Angeles", "Johannesburgo (SA)", "Madras");
+    private static final List<String> redCities = Arrays.asList("Hong Kong", "Sidney", "Bangkok", "Shangai", "Manila",
+            "Seul", "Ho Chi Minh", "Taipei", "Osaka", "Pekin", "Tokio", "Yakarta");
+
     public static final String LIGHT_BLUE = "#9999f9";
     public static final String GREY = "#c7c5c5";
     public static final String YELLOW = "#f3f3a3";
     public static final String LIGHT_GREEN = "#b3ffb3";
+    private static final String RED = "#ffcccc";
 
     /**
      * Row structure in the google sheet is the following:
@@ -53,6 +58,7 @@ public class InfectionCardFactory {
         if (blueCities.contains(cityWithoutDigits)) return LIGHT_BLUE;
         if (blackCities.contains(cityWithoutDigits)) return GREY;
         if (yellowCities.contains(cityWithoutDigits)) return YELLOW;
+        if (redCities.contains(cityWithoutDigits)) return RED;
         if (cityName.contains("Desalmados")) return LIGHT_GREEN;
         return "white";
     }

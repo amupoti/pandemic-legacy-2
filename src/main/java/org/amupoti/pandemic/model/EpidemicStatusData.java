@@ -8,6 +8,7 @@ import static java.util.function.Predicate.not;
 public class EpidemicStatusData {
 
     private static final String INITIAL_EPIDEMIC = "Infección inicial";
+    public static final int INITIAL_INFECTION_CARDS = 9;
     String currentEpidemic;
     int turnsSinceLastEpidemic;
     int infectionRate;
@@ -30,6 +31,7 @@ public class EpidemicStatusData {
         int cards = (int) infectionCardsInCurrentEpidemic.getCardsInEpidemic().stream()
                 .filter(not(InfectionCard::isSoulless))
                 .count();
+        if (currentEpidemic == 0) cards -= INITIAL_INFECTION_CARDS;
         return cards / InfectionRate.getRateForEpidemic(currentEpidemic);
     }
 }

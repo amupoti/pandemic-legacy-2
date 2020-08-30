@@ -33,6 +33,7 @@ public class PredictInfectionDeckController {
 
         log.info("Possible cards for next infection: \n{}", InfectionDeckData.prettyPrint(possibleCardsForNextInfection));
 
+        model.addAttribute("infectionDiscarded", infectionDeckData.getInfectionCardsInCurrentEpidemic());
         model.addAttribute("infectionSets", possibleCardsForNextInfection);
         model.addAttribute("epidemicData", new EpidemicStatusData(infectionDeckData));
         return "predict";

@@ -49,29 +49,61 @@
 <p> Epidemia actual: <span th:text="${epidemicData.currentEpidemic}"></span></p>
 <p> Turnos desde la última epidemia: <span th:text="${epidemicData.turnsSinceLastEpidemic}"></span></p>
 <p> Tasa de infección: <span th:text="${epidemicData.infectionRate}"></span></p>
-<h2>Lista de cartas de infección por salir</h2>
+<h2>Estado del mazo de infección</h2>
 
-<table border="1" cellpadding="5">
-    <thead>
-    <tr>
-        <th th:text="'# Cartas'"></th>
-        <th th:text="Cartas"></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="infectionSet: ${infectionSets}">
-        <td th:text="${#arrays.length(infectionSet.cardsInEpidemic)}"></td>
+<table>
+    <tr valign="top">
         <td>
-            <table>
-                <tr th:each="card: ${infectionSet.cardsInEpidemic}">
-                    <td th:text="${card.cityName} + ' '+ ${card.label}"
-                        th:style="'background:'+${card.color}"></td>
+            <table border="1" cellpadding="5">
+                <thead>
+                <tr>
+                    <th th:text="'# Cartas'"></th>
+                    <th th:text="'Mazo de infección'"></th>
                 </tr>
+                </thead>
+                <tbody>
+                <tr th:each="infectionSet: ${infectionSets}">
+                    <td th:text="${#arrays.length(infectionSet.cardsInEpidemic)}"></td>
+                    <td>
+                        <table>
+                            <tr th:each="card: ${infectionSet.cardsInEpidemic}">
+                                <td th:text="${card.cityName} + ' '+ ${card.label}"
+                                    th:style="'background:'+${card.color}"></td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </td>
+        <td>
+            <table border="1" cellpadding="5">
+                <thead>
+                <tr>
+                    <th th:text="'# Cartas'"></th>
+                    <th th:text="'Descartes de infección'"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${#arrays.length(infectionDiscarded.cardsInEpidemic)}"></td>
+                    <td>
+                        <table>
+                            <tr th:each="card: ${infectionDiscarded.cardsInEpidemic}">
+                                <td th:text="${card.cityName} + ' '+ ${card.label}"
+                                    th:style="'background:'+${card.color}"></td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+                </tbody>
             </table>
 
         </td>
     </tr>
-    </tbody>
 </table>
 
 
