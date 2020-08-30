@@ -31,6 +31,6 @@ public class SheetsServiceUtil {
     }
 
     public static Boolean parseBoolean(Object string) {
-        return string != null && (string.equals("1") || string.equals("sí"));
+        return string != null && (string.equals("1") || string.equals("sí") || string.equals("yes"));
     }
 }
