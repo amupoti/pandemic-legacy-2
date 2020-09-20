@@ -67,7 +67,11 @@ public class InfectionDeckData {
     }
 
     public List<InfectionSet> getPossibleCardsForNextInfection() {
-        List<InfectionSet> cardsForNextInfection = remainingCardsInSets.subList(0, remainingCardsInSets.size() - 1);
+        List<InfectionSet> cardsForNextInfection = remainingCardsInSets
+                .subList(0, remainingCardsInSets.size() - 1)
+                .stream()
+                .filter(infectionSet -> infectionSet.getCardsInEpidemic().size() > 0)
+                .collect(Collectors.toList());
 
         reverse(cardsForNextInfection);
         return cardsForNextInfection;

@@ -25,7 +25,7 @@ public class InfectionCardFactory {
     private static final List<String> redCities = Arrays.asList("Hong Kong", "Sidney", "Bangkok", "Shangai", "Manila",
             "Seul", "Ho Chi Minh", "Taipei", "Osaka", "Pekin", "Tokio", "Yakarta");
 
-    public static final String LIGHT_BLUE = "#9999f9";
+    public static final String LIGHT_BLUE = "#dbdaff";
     public static final String GREY = "#c7c5c5";
     public static final String YELLOW = "#f3f3a3";
     public static final String LIGHT_GREEN = "#b3ffb3";

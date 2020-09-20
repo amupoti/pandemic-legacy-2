@@ -1,0 +1,39 @@
+@font-face {
+    font-family: myFirstFont;
+    src: url(http://db.onlinewebfonts.com/t/52da978e8062081e500f7f09a1bf8fc7.ttf);
+    font-weight: bold;
+}
+
+h1 {
+    font-family: myFirstFont;
+    font-size: 32 px;
+}
+
+body {
+    font-family: Arial;
+
+}
+
+.Card {
+    padding: 10px;
+    letter-spacing: 0.5px;
+}
+
+
+table .InfectionDeck td {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.InfectionDiscard {}
+
+.InfectionSet {
+    text-align: center;
+    width: 100%;
+    table-layout: fixed;
+    font-size: 34px;
+}
+
+table .InfectionSet {
+    border: 15px solid white;
+}
