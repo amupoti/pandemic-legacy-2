@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-<head><title>Pandemic Legacy Season 2</title>
+<head>
+    <title>Pandemic Legacy Season 2</title>
     <link rel="stylesheet" th:href="@{/predict.css}">
 </head>
 <body>
@@ -9,59 +10,85 @@
 
 <table width="90%" align="center">
     <tr valign="top">
+        <!-- Mazo de infección -->
         <td>
             <table class="InfectionDeck">
-                <thead>
-                <tr>
-                    <th th:text="''"></th>
-                    <th th:text="'Mazo de infección'"></th>
-                </tr>
-                </thead>
                 <tbody>
-                <tr th:each="infectionSet: ${infectionSets}">
-                    <td th:text="${#arrays.length(infectionSet.cardsInEpidemic)}"></td>
+                <tr th:each="infectionSet : ${infectionSets}">
                     <td>
-                        <table class="InfectionSet">
-                            <tr th:each="card: ${infectionSet.cardsInEpidemic}">
-                                <td class="Card" th:text="${card.cityName} + ' '+ ${card.label}"
-                                    th:style="'background:'+${card.color}"></td>
-                            </tr>
-                        </table>
+                        <div class="section-header">
+                            <span class="title">Mazo de infección</span>
+                            <span class="card-count-inline" th:text="${#arrays.length(infectionSet.cardsInEpidemic)}"></span>
+                        </div>
+                        <div class="batch">
+                            <div class="separator"></div>
+                            <table class="InfectionSet">
+                                <tr th:each="i : ${#numbers.sequence(0, infectionSet.cardsInEpidemic.size() - 1, 2)}">
+                                    <td class="Card"
+                                        th:if="${i < infectionSet.cardsInEpidemic.size()}"
+                                        th:with="card1=${infectionSet.cardsInEpidemic[i]}"
+                                        th:style="'--card-color:' + ${card1.color}">
+                                        <span th:text="${card1.cityName}"></span><br/>
+                                        <span th:text="${card1.label}" style="font-size: 14px; opacity: 0.8;"></span>
+                                    </td>
 
+                                    <td class="Card"
+                                        th:if="${i + 1 < infectionSet.cardsInEpidemic.size()}"
+                                        th:with="card2=${infectionSet.cardsInEpidemic[i + 1]}"
+                                        th:style="'--card-color:' + ${card2.color}">
+                                        <span th:text="${card2.cityName}"></span><br/>
+                                        <span th:text="${card2.label}" style="font-size: 14px; opacity: 0.8;"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
-
         </td>
+
+
+
+        <!-- Descartes de infección -->
         <td>
             <table class="InfectionDeck">
-                <thead>
-                <tr>
-                    <th th:text="''"></th>
-                    <th th:text="'Descartes de infección'"></th>
-                </tr>
-                </thead>
                 <tbody>
                 <tr>
-                    <td th:text="${#arrays.length(infectionDiscarded.cardsInEpidemic)}"></td>
                     <td>
-                        <table class="InfectionSet">
-                            <tr th:each="card: ${infectionDiscarded.cardsInEpidemic}">
-                                <td class="Card" th:text="${card.cityName} + ' '+ ${card.label}"
-                                    th:style="'background:'+${card.color}"></td>
-                            </tr>
-                        </table>
+                        <div class="section-header">
+                            <span class="title">Descartes de infección</span>
+                            <span class="card-count-inline" th:text="${#arrays.length(infectionDiscarded.cardsInEpidemic)}"></span>
+                        </div>
+                        <div class="batch">
+                            <div class="separator"></div>
+                            <table class="InfectionSet">
+                                <tr th:each="i : ${#numbers.sequence(0, infectionDiscarded.cardsInEpidemic.size() - 1, 2)}">
+                                    <td class="Card"
+                                        th:if="${i < infectionDiscarded.cardsInEpidemic.size()}"
+                                        th:with="card1=${infectionDiscarded.cardsInEpidemic[i]}"
+                                        th:style="'--card-color:' + ${card1.color}">
+                                        <span th:text="${card1.cityName}"></span><br/>
+                                        <span th:text="${card1.label}" style="font-size: 14px; opacity: 0.8;"></span>
+                                    </td>
 
+                                    <td class="Card"
+                                        th:if="${i + 1 < infectionDiscarded.cardsInEpidemic.size()}"
+                                        th:with="card2=${infectionDiscarded.cardsInEpidemic[i + 1]}"
+                                        th:style="'--card-color:' + ${card2.color}">
+                                        <span th:text="${card2.cityName}"></span><br/>
+                                        <span th:text="${card2.label}" style="font-size: 14px; opacity: 0.8;"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </td>
                 </tr>
                 </tbody>
             </table>
-
         </td>
     </tr>
 </table>
-
 
 </body>
 </html>

@@ -22,7 +22,7 @@ public class GoogleAuthorizeUtil {
         //return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
 
 
-        return GoogleCredential.fromStream(GoogleAuthorizeUtil.class.getResourceAsStream("/service_account.json"))
+        return GoogleCredential.fromStream(GoogleAuthorizeUtil.class.getResourceAsStream("/credentials.json"))
                 .createScoped(Collections.singleton(SheetsScopes.DRIVE));
     }
 }

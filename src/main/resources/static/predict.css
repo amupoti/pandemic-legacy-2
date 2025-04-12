@@ -4,36 +4,153 @@
     font-weight: bold;
 }
 
-h1 {
-    font-family: myFirstFont;
-    font-size: 32 px;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    padding: 20px;
+    margin: 0;
 }
 
-body {
-    font-family: Arial;
-
+h1 {
+    font-family: myFirstFont;
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #D9534F;  /* Pandemic Legacy red */
 }
 
 .Card {
-    padding: 10px;
-    letter-spacing: 0.5px;
+    position: relative;
+    background-color: var(--card-color); /* from Thymeleaf */
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    min-width: 160px;
+    max-width: 200px;
+    overflow: hidden;
+    margin: 0;  /* REMOVE margin if using gap */
+
 }
 
-
-table .InfectionDeck td {
-    border-collapse: collapse;
-    table-layout: fixed;
+.Card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.08), rgba(0,0,0,0.2));
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 12px;
 }
 
-.InfectionDiscard {}
+.Card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+.InfectionDeck {
+    border-collapse: separate;
+    border-spacing: 10px;
+    width: 100%;
+}
 
 .InfectionSet {
-    text-align: center;
-    width: 100%;
-    table-layout: fixed;
-    font-size: 34px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    border-spacing: 20px 20px; /* horizontal and vertical spacing between cards */
+    border-collapse: separate; /* required to make spacing work */
 }
 
-table .InfectionSet {
-    border: 15px solid white;
+.InfectionSet .Card {
+    min-width: 100px;
+    max-width: 140px;
 }
+
+th {
+    font-size: 24px;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+/* Batch container holding the badge, separator, and cards */
+.batch {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;  /* Stack the elements vertically */
+    align-items: center; /* Center all the elements horizontally */
+}
+
+/* Badge that will visually look like part of the separator */
+.card-count {
+    padding: 6px 12px;
+    background-color: #B33A3A;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 20px;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    align-self: center;
+}
+
+/* Separator with matching color to the badge */
+.separator {
+    width: 60%;  /* Keep the separator width smaller */
+    height: 6px; /* Thicker separator for a bold visual effect */
+    background-color: #B33A3A;  /* Same color as the badge */
+    margin-bottom: 30px;  /* Increased space after the separator */
+    align-self: center;  /* Ensure it's horizontally centered */
+    border-radius: 3px;  /* Slight rounded corners for the separator */
+}
+
+
+.InfectionDeck td span.card-count {
+    padding: 6px 12px;
+    font-size: 30px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 10px;
+    min-width: 40px;
+    margin-bottom: 8px;
+}
+
+
+/* Ensure layout for Descartes de infección has the same clean alignment */
+.InfectionDeck td {
+    text-align: center;  /* Center the content horizontally */
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    gap: 8px;
+}
+
+.card-count-inline {
+    background-color: #B33A3A;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 24px;
+    text-align: center;
+}
+

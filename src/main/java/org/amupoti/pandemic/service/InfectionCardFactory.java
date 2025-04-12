@@ -25,11 +25,11 @@ public class InfectionCardFactory {
     private static final List<String> redCities = Arrays.asList("Hong Kong", "Sidney", "Bangkok", "Shangai", "Manila",
             "Seul", "Ho Chi Minh", "Taipei", "Osaka", "Pekin", "Tokio", "Yakarta");
 
-    public static final String LIGHT_BLUE = "#dbdaff";
-    public static final String GREY = "#c7c5c5";
-    public static final String YELLOW = "#f3f3a3";
+    public static final String LIGHT_BLUE = "#302ae3";
+    public static final String GREY = "#515A5B";
+    public static final String YELLOW = "#F4D03F";
     public static final String LIGHT_GREEN = "#b3ffb3";
-    private static final String RED = "#ffcccc";
+    private static final String RED = "#E74C3C";
 
     /**
      * Row structure in the google sheet is the following:
