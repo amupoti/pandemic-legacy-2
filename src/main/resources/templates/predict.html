@@ -6,7 +6,8 @@
 </head>
 <body>
 
-<h1>Pandemic Legacy Season 2</h1>
+<!--<h1>Pandemic Legacy Season 2</h1>-->
+
 
 <table width="90%" align="center">
     <tr valign="top">
@@ -17,7 +18,7 @@
                 <tr th:each="infectionSet : ${infectionSets}">
                     <td>
                         <div class="section-header">
-                            <span class="title">Mazo de infección</span>
+                            <span class="title">Pila d'infecció</span>
                             <span class="card-count-inline" th:text="${#arrays.length(infectionSet.cardsInEpidemic)}"></span>
                         </div>
                         <div class="batch">
@@ -26,19 +27,34 @@
                                 <tr th:each="i : ${#numbers.sequence(0, infectionSet.cardsInEpidemic.size() - 1, 2)}">
                                     <td class="Card"
                                         th:if="${i < infectionSet.cardsInEpidemic.size()}"
-                                        th:with="card1=${infectionSet.cardsInEpidemic[i]}"
+                                        th:with="card1=${infectionSet.cardsInEpidemic[i]},prob=${probability[card1.cityName]}"
                                         th:style="'--card-color:' + ${card1.color}">
+
                                         <span th:text="${card1.cityName}"></span><br/>
-                                        <span th:text="${card1.label}" style="font-size: 14px; opacity: 0.8;"></span>
+                                        <span th:text="${card1.label}" style="font-size: 14px; opacity: 0.8;"></span><br/>
+
+                                        <span th:if="${prob > 0}"
+                                              th:text="'Prob: ' + ${#numbers.formatDecimal(prob * 100, 0, 0)} + '%'"
+                                              style="font-size: 12px; opacity: 0.6;"></span>
                                     </td>
+
+
+
 
                                     <td class="Card"
                                         th:if="${i + 1 < infectionSet.cardsInEpidemic.size()}"
-                                        th:with="card2=${infectionSet.cardsInEpidemic[i + 1]}"
+                                        th:with="card2=${infectionSet.cardsInEpidemic[i + 1]},
+             prob=${probability[card2.cityName]}"
                                         th:style="'--card-color:' + ${card2.color}">
+
                                         <span th:text="${card2.cityName}"></span><br/>
-                                        <span th:text="${card2.label}" style="font-size: 14px; opacity: 0.8;"></span>
+                                        <span th:text="${card2.label}" style="font-size: 14px; opacity: 0.8;"></span><br/>
+
+                                        <span th:if="${prob > 0}"
+                                              th:text="'Prob: ' + ${#numbers.formatDecimal(prob * 100, 0, 0)} + '%'"
+                                              style="font-size: 12px; opacity: 0.6;"></span>
                                     </td>
+
                                 </tr>
                             </table>
                         </div>
@@ -57,7 +73,7 @@
                 <tr>
                     <td>
                         <div class="section-header">
-                            <span class="title">Descartes de infección</span>
+                            <span class="title">Descarts d'infecció</span>
                             <span class="card-count-inline" th:text="${#arrays.length(infectionDiscarded.cardsInEpidemic)}"></span>
                         </div>
                         <div class="batch">
@@ -82,6 +98,23 @@
                                 </tr>
                             </table>
                         </div>
+
+                        <div class="epidemic-status">
+                            <div class="epidemic-row">
+                                🦠 <strong>Epidèmia actual:</strong>
+                                <span th:text="${epidemicData.currentEpidemic}" class="epidemic-label"></span>
+                            </div>
+                            <div class="epidemic-row">
+                                🔥 <strong>Ritme d'infecció:</strong>
+                                <span th:text="${epidemicData.infectionRate}" class="infection-rate"></span>
+                            </div>
+                            <div class="epidemic-row">
+                                ⏱️ <strong>Torns des de l'última epidèmia:</strong>
+                                <span th:text="${epidemicData.turnsSinceLastEpidemic}" class="infection-rate"></span>
+                            </div>
+                        </div>
+
+
                     </td>
                 </tr>
                 </tbody>
@@ -89,6 +122,7 @@
         </td>
     </tr>
 </table>
+
 
 </body>
 </html>

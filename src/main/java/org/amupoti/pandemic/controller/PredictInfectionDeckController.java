@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -28,20 +29,24 @@ public class PredictInfectionDeckController {
     public String getPrediction(Model model) throws IOException, GeneralSecurityException {
 
         InfectionDeckData infectionDeckData = getInfectionDeckData();
+        List<InfectionSet> infectionSetsInDeck = infectionDeckData.getPossibleCardsForNextInfectionDraws();
+        EpidemicStatusData epidemicStatusData = new EpidemicStatusData(infectionDeckData);
+        Map<String, Double> cityInfectionProbability = InfectionDeckData.rankCitiesByInfectionRisk(infectionSetsInDeck, epidemicStatusData.getInfectionRate());
 
-        List<InfectionSet> possibleCardsForNextInfection = infectionDeckData.getPossibleCardsForNextInfection();
-
-        log.info("Possible cards for next infection: \n{}", InfectionDeckData.prettyPrint(possibleCardsForNextInfection));
+        log.info("Possible cards for next infection: \n{}", InfectionDeckData.prettyPrint(infectionSetsInDeck));
 
         model.addAttribute("infectionDiscarded", infectionDeckData.getInfectionCardsInCurrentEpidemic());
-        model.addAttribute("infectionSets", possibleCardsForNextInfection);
-        model.addAttribute("epidemicData", new EpidemicStatusData(infectionDeckData));
+        model.addAttribute("infectionSets", infectionSetsInDeck);
+        model.addAttribute("epidemicData", epidemicStatusData);
+        model.addAttribute("probability", cityInfectionProbability);
+
+        log.info("Epidemic data: {}",model.asMap().get("epidemicData"));
         return "predict";
     }
 
     private InfectionDeckData getInfectionDeckData() throws IOException, GeneralSecurityException {
         List<InfectionCard> infectionCards = infectionModelLoader.loadFromGooglesheet(SPREADSHEET_ID);
         infectionCards.forEach(card -> log.info(card.toString()));
-        return InfectionSet.createFromInfectionCardData(infectionCards);
+        return InfectionDeckData.createFromInfectionCardData(infectionCards);
     }
 }
