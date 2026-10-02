@@ -25,7 +25,7 @@ public class PredictInfectionDeckController {
     @Autowired
     private InfectionModelLoader infectionModelLoader;
 
-    @GetMapping("/predict.html")
+    @GetMapping("/")
     public String getPrediction(Model model) throws IOException, GeneralSecurityException {
 
         InfectionDeckData infectionDeckData = getInfectionDeckData();
