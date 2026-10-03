@@ -1,0 +1,20 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Inner face of an infection card, styled after the physical Pandemic Legacy S2 cards -->
+<div class="card-face" th:fragment="cardFace(card, prob)">
+    <div class="card-name-band">
+        <span class="card-name" th:text="${card.cityName}"></span>
+    </div>
+    <div class="card-body">
+        <span class="card-label" th:if="${!#strings.isEmpty(card.label)}" th:text="${card.label}"></span>
+        <span class="card-times" th:title="'Aparicions: ' + ${card.timesAppeared}"
+              th:text="'×' + ${card.timesAppeared}"></span>
+        <span class="card-prob" th:if="${prob != null and prob > 0}"
+              th:text="${#numbers.formatDecimal(prob * 100, 0, 0)} + '%'"></span>
+    </div>
+</div>
+
+</body>
+</html>

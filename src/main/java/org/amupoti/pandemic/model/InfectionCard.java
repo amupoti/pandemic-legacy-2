@@ -3,6 +3,8 @@ package org.amupoti.pandemic.model;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Value
 @Slf4j
 public class InfectionCard {
@@ -25,6 +27,15 @@ public class InfectionCard {
      */
     public int getNumberOfEpidemics() {
         return infectionCardAppearances.getAppearsInEpidemic().size();
+    }
+
+    /**
+     * @return the number of times the card has appeared in the sheet (initial infection and epidemics),
+     * skipping the first entry, which is always true and only marks the card as part of the deck
+     */
+    public long getTimesAppeared() {
+        List<Boolean> appearances = infectionCardAppearances.getAppearsInEpidemic();
+        return appearances.subList(1, appearances.size()).stream().filter(Boolean::booleanValue).count();
     }
 
     public String shortPrint() {

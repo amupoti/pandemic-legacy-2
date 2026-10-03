@@ -5,6 +5,7 @@
 }
 
 body {
+    zoom: 1.15; /* bigger than default, for laptop screens */
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
     padding: 20px;
@@ -19,41 +20,131 @@ h1 {
     color: #D9534F;  /* Pandemic Legacy red */
 }
 
+/* Infection card, styled after the physical Pandemic Legacy S2 cards:
+   dark speckled frame with rivets, worn cream face, coloured stripe and biohazard corner */
 .Card {
+    --noise-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.75'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --noise-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .18 0 0 0 0 .15 0 0 0 .9 -.42'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --rivet: radial-gradient(circle, #c47a4a 0 1.4px, #6b351f 2px, transparent 2.6px);
     position: relative;
-    background-color: var(--card-color); /* from Thymeleaf */
-    border-radius: 12px;
-    padding: 20px;
-    margin: 10px;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    color: white !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    width: 180px;
+    min-width: 180px; /* keep the table layout from squeezing cards */
+    height: 116px;
+    padding: 9px;
+    margin: 0;
+    border-radius: 6px;
+    background:
+        var(--rivet) left 1px top 1px / 8px 8px no-repeat,
+        var(--rivet) right 1px top 1px / 8px 8px no-repeat,
+        var(--rivet) left 1px bottom 1px / 8px 8px no-repeat,
+        var(--rivet) right 1px bottom 1px / 8px 8px no-repeat,
+        var(--noise-light),
+        color-mix(in srgb, var(--card-color) 85%, #000); /* frame tinted with the card colour */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-    min-width: 160px;
-    max-width: 200px;
-    overflow: hidden;
-    margin: 0;  /* REMOVE margin if using gap */
-
-}
-
-
-
-.Card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom right, rgba(255,255,255,0.08), rgba(0,0,0,0.2));
-    pointer-events: none;
-    z-index: 1;
-    border-radius: 12px;
 }
 
 .Card:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+.card-face {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 2px;
+    overflow: hidden;
+    background:
+        var(--noise-dark),
+        linear-gradient(160deg, #ebe7dd 35%, color-mix(in srgb, var(--card-color) 30%, #ebe7dd) 100%);
+}
+
+.card-name-band {
+    background: var(--noise-dark), #f6f4ee;
+    border-bottom: 4px solid var(--card-color); /* from Thymeleaf */
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    padding: 5px 22px 3px 7px;
+    text-align: left;
+}
+
+.card-name {
+    font: 700 16px/1.05 'Oswald', Impact, 'Arial Narrow', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #1b1b1b;
+    overflow-wrap: break-word;
+}
+
+/* Coloured corner with the biohazard symbol */
+.card-face::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    z-index: 1;
+    background: var(--card-color);
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+.card-face::after {
+    content: "\2623";
+    position: absolute;
+    top: 1px;
+    right: 3px;
+    z-index: 2;
+    font-size: 16px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
+}
+
+.card-body {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 6px;
+}
+
+/* Dark "sticker" for card labels, like the Lockdown stickers on the physical cards */
+.card-label {
+    background: var(--noise-dark), #3a2f2b;
+    color: #e6e1d9;
+    font: 700 10px/1.2 'Open Sans', Arial, sans-serif;
+    text-align: center;
+    padding: 4px 8px;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Times the card has appeared so far */
+.card-times {
+    position: absolute;
+    left: 5px;
+    bottom: 4px;
+    font: 600 11px/1 'Oswald', 'Arial Narrow', sans-serif;
+    color: #1f1f1f;
+    background: rgba(246, 244, 238, 0.85);
+    border: 1px solid #1f1f1f;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.card-prob {
+    position: absolute;
+    right: 5px;
+    bottom: 4px;
+    font: 600 11px/1 'Oswald', 'Arial Narrow', sans-serif;
+    background: #1f1f1f;
+    color: #f2efe6;
+    padding: 3px 6px;
+    border-radius: 3px;
 }
 
 .InfectionDeck {
@@ -68,11 +159,6 @@ h1 {
     justify-content: center;
     border-spacing: 20px 20px; /* horizontal and vertical spacing between cards */
     border-collapse: separate; /* required to make spacing work */
-}
-
-.InfectionSet .Card {
-    min-width: 100px;
-    max-width: 140px;
 }
 
 th {
@@ -156,27 +242,21 @@ th {
     text-align: center;
 }
 
+/* Compact epidemic status bar at the top of the page */
 .epidemic-status {
-    padding: 20px;
-    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 20px;
+    width: fit-content;
+    margin: 0 auto 12px;
+    padding: 4px 14px;
+    border-radius: 6px;
     background: #f0f8ff;
-    border-left: 6px solid #B33A3A;
-    margin-top: 20px;
-    font-family: sans-serif;
-    font-size: 18px;
-    line-height: 1.8;
+    border-left: 4px solid #B33A3A;
+    font-size: 13px;
 }
 
-.epidemic-row {
-    margin-bottom: 10px;
-}
-
-.epidemic-label {
-    font-weight: bold;
-    font-size: 19px;
-}
-
-.infection-rate {
-    font-weight: bold;
-    font-size: 19px;
+.epidemic-item strong {
+    font-size: 15px;
 }
