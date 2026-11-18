@@ -82,3 +82,6 @@ hs_err_pid*
 
 # Google API credentials
 credentials.json
+
+# macOS
+.DS_Store
