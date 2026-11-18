@@ -140,6 +140,37 @@ public class InfectionDeckData {
 
     }
 
+    /**
+     * The next epidemic draws the bottom card of the infection deck. The bottom layer of the deck is the last
+     * non-empty set (ordered top to bottom), and every card in it is equally likely to be the bottom one,
+     * so a city with k cards in a layer of n cards has probability k/n.
+     *
+     * @param setsTopToBottom remaining sets of the infection deck, ordered from top to bottom
+     * @return cities in the bottom layer, sorted by probability (highest first) and then by name
+     */
+    public static List<CityEpidemicRisk> rankCitiesByEpidemicRisk(List<InfectionSet> setsTopToBottom) {
+        List<InfectionCard> bottomCards = setsTopToBottom.stream()
+                .map(InfectionSet::getCardsInEpidemic)
+                .filter(cards -> !cards.isEmpty())
+                .reduce((first, second) -> second)
+                .orElse(Collections.emptyList());
+
+        int totalCards = bottomCards.size();
+        Map<String, List<InfectionCard>> cardsByCity = bottomCards.stream()
+                .collect(Collectors.groupingBy(card -> cityNameWithoutNumber(card.getCityName()),
+                        LinkedHashMap::new, Collectors.toList()));
+
+        return cardsByCity.entrySet().stream()
+                .map(entry -> new CityEpidemicRisk(
+                        entry.getKey(),
+                        entry.getValue().get(0).getColor(),
+                        entry.getValue().size(),
+                        (double) entry.getValue().size() / totalCards))
+                .sorted(Comparator.comparingDouble(CityEpidemicRisk::getProbability).reversed()
+                        .thenComparing(CityEpidemicRisk::getCity))
+                .collect(Collectors.toList());
+    }
+
     private static String cityNameWithoutNumber(String cityName) {
         return cityName.replaceAll(" \\d+$", "");
     }

@@ -260,3 +260,41 @@ th {
 .epidemic-item strong {
     font-size: 15px;
 }
+
+/* Per-city probability of being the bottom card drawn in the next epidemic */
+.epidemic-risk {
+    width: fit-content;
+    max-width: 90%;
+    margin: 0 auto 16px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    background: #fff4e5;
+    border-left: 4px solid #B33A3A;
+    text-align: center;
+}
+
+.epidemic-risk-title {
+    font: 600 14px/1.2 'Oswald', 'Arial Narrow', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+}
+
+.epidemic-risk-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+
+.epidemic-risk-city {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #f6f4ee;
+    border-left: 5px solid var(--card-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    font-size: 13px;
+}

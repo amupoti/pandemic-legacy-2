@@ -39,6 +39,7 @@ public class PredictInfectionDeckController {
         model.addAttribute("infectionSets", infectionSetsInDeck);
         model.addAttribute("epidemicData", epidemicStatusData);
         model.addAttribute("probability", cityInfectionProbability);
+        model.addAttribute("epidemicRisk", InfectionDeckData.rankCitiesByEpidemicRisk(infectionSetsInDeck));
 
         log.info("Epidemic data: {}",model.asMap().get("epidemicData"));
         return "predict";

@@ -65,6 +65,40 @@ class InfectionDeckDataTest {
         assertThat(probabilities.get("Epsilon")).isEqualTo(0.0);
     }
 
+    @Test
+    void epidemicRiskIsComputedPerCityFromTheBottomSet() {
+        List<InfectionSet> sets = Arrays.asList(
+                set("Alpha", "Beta"),
+                set("Lagos 1", "Lagos 2", "Madrid", "Tokio")
+        );
+
+        List<CityEpidemicRisk> risks = InfectionDeckData.rankCitiesByEpidemicRisk(sets);
+
+        assertThat(risks).extracting(CityEpidemicRisk::getCity).containsExactly("Lagos", "Madrid", "Tokio");
+        assertThat(risks.get(0).getCardsAtBottom()).isEqualTo(2);
+        assertThat(risks.get(0).getProbability()).isCloseTo(0.5, offset(0.000001));
+        assertThat(risks.get(1).getProbability()).isCloseTo(0.25, offset(0.000001));
+    }
+
+    @Test
+    void epidemicRiskSkipsEmptySetsAtTheBottom() {
+        List<InfectionSet> sets = Arrays.asList(
+                set("Alpha", "Beta"),
+                set("Gamma"),
+                set()
+        );
+
+        List<CityEpidemicRisk> risks = InfectionDeckData.rankCitiesByEpidemicRisk(sets);
+
+        assertThat(risks).extracting(CityEpidemicRisk::getCity).containsExactly("Gamma");
+        assertThat(risks.get(0).getProbability()).isEqualTo(1.0);
+    }
+
+    @Test
+    void epidemicRiskIsEmptyWhenThereAreNoCards() {
+        assertThat(InfectionDeckData.rankCitiesByEpidemicRisk(Collections.emptyList())).isEmpty();
+    }
+
     private static InfectionSet set(String... cityNames) {
         return new InfectionSet(Arrays.stream(cityNames)
                 .map(InfectionDeckDataTest::card)
