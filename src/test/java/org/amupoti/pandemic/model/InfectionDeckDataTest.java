@@ -99,6 +99,25 @@ class InfectionDeckDataTest {
         assertThat(InfectionDeckData.rankCitiesByEpidemicRisk(Collections.emptyList())).isEmpty();
     }
 
+    @Test
+    void repeatedCardNamesDoNotBreakTheCalculation() {
+        List<InfectionSet> sets = Collections.singletonList(set("Lagos 1", "Lagos 1", "Madrid"));
+
+        Map<String, Double> probabilities = InfectionDeckData.rankCitiesByInfectionRisk(sets, 1);
+
+        assertThat(probabilities.get("Lagos 1")).isCloseTo(2.0 / 3.0, offset(0.000001));
+    }
+
+    @Test
+    void anEmptySheetGivesAnEmptyDeckAtTheInitialInfection() {
+        InfectionDeckData deck = InfectionDeckData.createFromInfectionCardData(Collections.emptyList());
+
+        assertThat(deck.getCurrentEpidemic()).isZero();
+        assertThat(deck.getPossibleCardsForNextInfectionDraws()).isEmpty();
+        assertThat(deck.getInfectionCardsInCurrentEpidemic().getCardsInEpidemic()).isEmpty();
+        assertThat(new EpidemicStatusData(deck).getTurnsSinceLastEpidemic()).isZero();
+    }
+
     private static InfectionSet set(String... cityNames) {
         return new InfectionSet(Arrays.stream(cityNames)
                 .map(InfectionDeckDataTest::card)

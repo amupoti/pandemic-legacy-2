@@ -298,3 +298,12 @@ th {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
     font-size: 13px;
 }
+
+/* Empty discard pile, the normal state right after an epidemic */
+.empty {
+    margin: 12px 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+}

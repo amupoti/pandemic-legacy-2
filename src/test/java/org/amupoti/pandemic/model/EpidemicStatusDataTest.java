@@ -1,0 +1,49 @@
+package org.amupoti.pandemic.model;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class EpidemicStatusDataTest {
+
+    @Test
+    void theInfectionRateFollowsTheTrack() {
+        assertThat(InfectionRate.getRateForEpidemic(0)).isEqualTo(2);
+        assertThat(InfectionRate.getRateForEpidemic(5)).isEqualTo(4);
+        assertThat(InfectionRate.getRateForEpidemic(7)).isEqualTo(5);
+    }
+
+    @Test
+    void theInfectionRateStaysAtTheLastValueAfterTheTrack() {
+        assertThat(InfectionRate.getRateForEpidemic(8)).isEqualTo(5);
+        assertThat(InfectionRate.getRateForEpidemic(12)).isEqualTo(5);
+    }
+
+    @Test
+    void turnsAreNeverNegativeWhileTheInitialInfectionIsBeingEntered() {
+        // Only 4 of the 9 initial infection cards are in the sheet so far
+        InfectionDeckData deck = InfectionDeckData.createFromInfectionCardData(cards(4, Arrays.asList(true, true)));
+
+        assertThat(new EpidemicStatusData(deck).getTurnsSinceLastEpidemic()).isZero();
+    }
+
+    @Test
+    void turnsCountTheCardsDrawnAfterTheInitialInfection() {
+        // 9 initial infection cards plus 4 drawn at rate 2
+        InfectionDeckData deck = InfectionDeckData.createFromInfectionCardData(cards(13, Arrays.asList(true, true)));
+
+        assertThat(new EpidemicStatusData(deck).getTurnsSinceLastEpidemic()).isEqualTo(2);
+    }
+
+    private static List<InfectionCard> cards(int count, List<Boolean> appearances) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> new InfectionCard("City " + i, "", true, false, false,
+                        new InfectionCardAppearances(appearances), ""))
+                .collect(Collectors.toList());
+    }
+}

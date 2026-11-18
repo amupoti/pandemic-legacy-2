@@ -32,6 +32,6 @@ public class EpidemicStatusData {
                 .filter(not(InfectionCard::isSoulless))
                 .count();
         if (currentEpidemic == 0) cards -= INITIAL_INFECTION_CARDS;
-        return cards / InfectionRate.getRateForEpidemic(currentEpidemic);
+        return Math.max(0, cards) / InfectionRate.getRateForEpidemic(currentEpidemic);
     }
 }

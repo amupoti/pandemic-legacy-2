@@ -34,8 +34,8 @@ public class InfectionDeckData {
 
     public static InfectionDeckData createFromInfectionCardData(List<InfectionCard> infectionCards) {
 
-        //The initial
-        int numberOfSets = infectionCards.get(0).getNumberOfEpidemics();
+        //An empty sheet still has the deck and the initial infection
+        int numberOfSets = infectionCards.isEmpty() ? 2 : infectionCards.get(0).getNumberOfEpidemics();
 
         List<InfectionSet> infectionSetList = IntStream.range(0, numberOfSets)
                 .mapToObj(currentSet -> InfectionSet.getEpidemicCards(infectionCards, currentSet))
@@ -136,7 +136,8 @@ public class InfectionDeckData {
         }
 
         List<String> cityNames = remainingSets.stream().flatMap(set -> set.getCardsInEpidemic().stream()).map(InfectionCard::getCityName).collect(Collectors.toList());
-        return cityNames.stream().collect(Collectors.toMap(cityName -> cityName, cityName -> cityToProbability.getOrDefault(cityNameWithoutNumber(cityName), 0.0)));
+        return cityNames.stream().collect(Collectors.toMap(cityName -> cityName, cityName -> cityToProbability.getOrDefault(cityNameWithoutNumber(cityName), 0.0),
+                (first, second) -> first));
 
     }
 

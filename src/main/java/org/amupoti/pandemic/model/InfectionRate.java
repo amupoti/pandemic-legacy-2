@@ -10,7 +10,10 @@ public class InfectionRate {
             Arrays.asList(2, 2, 2, 3, 3, 4, 4, 5)
     );
 
+    /**
+     * The rate stays at its last value after the last epidemic of the track
+     */
     public static int getRateForEpidemic(int epidemicNumber) {
-        return infectionRate.get(epidemicNumber);
+        return infectionRate.get(Math.min(epidemicNumber, infectionRate.size() - 1));
     }
 }

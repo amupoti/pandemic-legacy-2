@@ -86,7 +86,8 @@
                         </div>
                         <div class="batch">
                             <div class="separator"></div>
-                            <table class="InfectionSet">
+                            <p class="empty" th:if="${#lists.isEmpty(infectionDiscarded.cardsInEpidemic)}">Encara no s'ha robat cap carta des de l'última epidèmia.</p>
+                            <table class="InfectionSet" th:unless="${#lists.isEmpty(infectionDiscarded.cardsInEpidemic)}">
                                 <tr th:each="i : ${#numbers.sequence(0, infectionDiscarded.cardsInEpidemic.size() - 1, 2)}">
                                     <td class="Card"
                                         th:if="${i < infectionDiscarded.cardsInEpidemic.size()}"
