@@ -281,6 +281,35 @@ class CampaignWebTest {
     }
 
     @Test
+    void theInitialInfectionCountStopsAtNineAndTheTurnsCarryOn() throws Exception {
+        mvc.perform(post("/import"));
+        campaignService.addCards("Lagos", 10, "", "white", org.amupoti.pandemic.campaign.CardState.IN_NETWORK);
+        mvc.perform(post("/campanya/new-game").param("confirm", "true"));
+        List<Integer> deck = campaign().getCardsInTheGame().stream()
+                .map(org.amupoti.pandemic.campaign.CampaignCard::getId)
+                .collect(java.util.stream.Collectors.toList());
+
+        for (int drawn = 0; drawn < 8; drawn++) mvc.perform(post("/draw/" + deck.get(drawn)));
+        mvc.perform(get("/")).andExpect(content().string(containsString("Infecció inicial: 8 de 9 cartes.")));
+
+        for (int drawn = 8; drawn < 13; drawn++) mvc.perform(post("/draw/" + deck.get(drawn)));
+        mvc.perform(get("/"))
+                .andExpect(content().string(not(containsString("de 9 cartes"))))
+                .andExpect(content().string(containsString("Toca una carta de la pila d'infecció quan la robis.")));
+    }
+
+    @Test
+    void theGridMarksCardsDrawnOutOfOrder() throws Exception {
+        mvc.perform(post("/import"));
+        mvc.perform(post("/epidemic/" + GAMMA));
+        mvc.perform(post("/draw/" + EPSILON));
+
+        Document page = Jsoup.parse(mvc.perform(get("/campanya/graella")).andReturn().getResponse().getContentAsString());
+        assertThat(page.text()).contains("Possibles incoherències");
+        assertThat(page.select("td.suspect input").eachAttr("name")).containsExactly("c" + EPSILON + "p1");
+    }
+
+    @Test
     void theColourListDoesNotNameTheSoullessButKeepsTheirColour() throws Exception {
         mvc.perform(post("/import"));
         campaignService.updateCard(GAMMA, "Gamma", "", "#b3ffb3", campaign().card(GAMMA).getState());

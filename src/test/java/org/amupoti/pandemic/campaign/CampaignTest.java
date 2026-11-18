@@ -280,6 +280,62 @@ class CampaignTest {
     }
 
     @Test
+    void cardsFromTheTopLayerFirstAreInOrder() {
+        campaign.epidemic(GAMMA);
+        campaign.draw(ALPHA);
+        campaign.draw(BETA);
+        campaign.draw(GAMMA);
+        campaign.draw(DELTA);
+
+        assertThat(campaign.getDrawOrderIssues()).isEmpty();
+    }
+
+    @Test
+    void flagsCardsDrawnBeforeTheTopLayerRanOut() {
+        campaign.epidemic(GAMMA);
+        campaign.draw(DELTA);
+        campaign.draw(EPSILON);
+
+        assertThat(campaign.getDrawOrderIssues()).hasSize(1);
+        DrawOrderIssue issue = campaign.getDrawOrderIssues().get(0);
+        assertThat(issue.getPeriod()).isEqualTo(1);
+        assertThat(issue.getCardIds()).containsExactly(DELTA, EPSILON);
+        assertThat(issue.getMessage()).isEqualTo("Ep1: Delta, Epsilon han sortit abans d'acabar les cartes de dalt de "
+                + "la pila (les que van sortir a Inicial). Encara hi havia: Alpha, Beta, Gamma.");
+    }
+
+    @Test
+    void theEpidemicCardComesFromTheBottom() {
+        campaign.epidemic(GAMMA);
+        campaign.draw(ALPHA);
+        campaign.epidemic(DELTA);
+
+        assertThat(campaign.getDrawOrderIssues()).isEmpty();
+    }
+
+    @Test
+    void onlyOneCardFromTheBottomCanBeTheEpidemicCard() {
+        campaign.epidemic(GAMMA);
+        campaign.draw(DELTA);
+        campaign.epidemic(EPSILON);
+
+        assertThat(campaign.getDrawOrderIssues()).hasSize(1);
+        assertThat(campaign.getDrawOrderIssues().get(0).getCardIds()).containsExactly(DELTA, EPSILON);
+        assertThat(campaign.getDrawOrderIssues().get(0).getMessage()).endsWith("pot ser la carta de l'epidèmia.");
+    }
+
+    @Test
+    void cardsOutOfTheGameDoNotNeedToRunOut() {
+        campaign.epidemic(GAMMA);
+        campaign.changeState(ALPHA, CardState.OUT_OF_NETWORK);
+        campaign.draw(BETA);
+        campaign.draw(GAMMA);
+        campaign.draw(DELTA);
+
+        assertThat(campaign.getDrawOrderIssues()).isEmpty();
+    }
+
+    @Test
     void warnsAboutAnInitialInfectionWithoutNineCards() {
         assertThat(campaign.getWarnings()).isEmpty();
 

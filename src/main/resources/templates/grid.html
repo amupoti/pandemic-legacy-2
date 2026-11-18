@@ -20,6 +20,11 @@
     <ul class="warnings"><li th:each="warning : ${warnings}" th:text="${warning}"></li></ul>
 </div>
 
+<div class="flash error" th:if="${!#lists.isEmpty(drawOrderIssues)}">
+    <strong>Possibles incoherències en l'ordre de la pila</strong> (marcades en vermell a la graella):
+    <ul class="warnings"><li th:each="issue : ${drawOrderIssues}" th:text="${issue.message}"></li></ul>
+</div>
+
 <form class="panel" method="post" th:action="@{/campanya/graella}">
     <h1 class="panel-title" th:text="'Graella de correccions · Partida ' + ${campaign.game}"></h1>
     <p class="hint">Com al Google Sheets: marca a quina fase ha sortit cada carta. Serveix per arreglar errors que
@@ -40,7 +45,8 @@
                     <span th:text="${card.cityName}"></span>
                     <small th:unless="${card.inTheGame}" th:text="${card.state.description}"></small>
                 </th>
-                <td th:each="name, period : ${periodNames}">
+                <td th:each="name, period : ${periodNames}"
+                    th:classappend="${#sets.contains(suspectCells, 'c' + card.id + 'p' + period.index)} ? 'suspect'">
                     <input type="checkbox" value="1"
                            th:name="'c' + ${card.id} + 'p' + ${period.index}"
                            th:checked="${#sets.contains(card.drawnInPeriods, period.index)}"

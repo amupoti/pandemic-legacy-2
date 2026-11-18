@@ -7,6 +7,7 @@ import org.amupoti.pandemic.campaign.CampaignCard;
 import org.amupoti.pandemic.campaign.CampaignService;
 import org.amupoti.pandemic.campaign.CardColor;
 import org.amupoti.pandemic.campaign.CardState;
+import org.amupoti.pandemic.campaign.DrawOrderIssue;
 import org.amupoti.pandemic.campaign.LegacyChange;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
@@ -153,13 +154,18 @@ public class CampaignController {
                         .thenComparing(CampaignCard::getCityName))
                 .collect(Collectors.toList());
         List<String> periodNames = IntStream.range(0, campaign.getPeriods())
-                .mapToObj(period -> period == 0 ? "Inicial" : "Ep" + period)
+                .mapToObj(Campaign::periodName)
                 .collect(Collectors.toList());
 
         model.addAttribute("campaign", campaign);
         model.addAttribute("cards", cards);
         model.addAttribute("periodNames", periodNames);
         model.addAttribute("warnings", campaign.getWarnings());
+        List<DrawOrderIssue> issues = campaign.getDrawOrderIssues();
+        model.addAttribute("drawOrderIssues", issues);
+        model.addAttribute("suspectCells", issues.stream()
+                .flatMap(issue -> issue.getCardIds().stream().map(cardId -> "c" + cardId + "p" + issue.getPeriod()))
+                .collect(Collectors.toSet()));
         return "grid";
     }
 

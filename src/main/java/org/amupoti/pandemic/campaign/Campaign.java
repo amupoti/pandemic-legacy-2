@@ -321,6 +321,74 @@ public class Campaign {
         return warnings;
     }
 
+    /**
+     * Checks the grid against the order of the deck. After an epidemic the cards of the previous period are on top,
+     * so in each period the cards have to come from that top layer until it runs out, then from the layer below,
+     * and so on. A period that ended with an epidemic may have one card from the bottom: the epidemic card.
+     * Cards that are no longer in the game cannot be drawn, so they do not need to run out.
+     */
+    @JsonIgnore
+    public List<DrawOrderIssue> getDrawOrderIssues() {
+        List<DrawOrderIssue> issues = new ArrayList<>();
+        for (int period = 1; period < periods; period++) {
+            int current = period;
+            // Layer of each card when the period starts: the last period it was drawn in, or -1 if never
+            java.util.Map<Integer, Integer> layerOf = new java.util.HashMap<>();
+            for (CampaignCard card : cards) {
+                layerOf.put(card.getId(), card.getDrawnInPeriods().headSet(current).isEmpty()
+                        ? -1 : card.getDrawnInPeriods().headSet(current).last());
+            }
+            List<CampaignCard> drawn = cards.stream()
+                    .filter(card -> card.getDrawnInPeriods().contains(current))
+                    .collect(Collectors.toList());
+            if (drawn.isEmpty()) continue;
+
+            // The highest layer that still had cards in the game when the period ended
+            int openLayer = -2;
+            List<CampaignCard> left = new ArrayList<>();
+            for (int layer = current - 1; layer >= -1; layer--) {
+                int inLayer = layer;
+                left = cards.stream()
+                        .filter(CampaignCard::isInTheGame)
+                        .filter(card -> layerOf.get(card.getId()) == inLayer)
+                        .filter(card -> !card.getDrawnInPeriods().contains(current))
+                        .collect(Collectors.toList());
+                if (!left.isEmpty()) {
+                    openLayer = layer;
+                    break;
+                }
+            }
+            int open = openLayer;
+            List<CampaignCard> tooEarly = drawn.stream()
+                    .filter(card -> layerOf.get(card.getId()) < open)
+                    .collect(Collectors.toList());
+
+            boolean endedWithEpidemic = current < getCurrentPeriod();
+            int deepestLayer = cards.stream().mapToInt(card -> layerOf.get(card.getId())).min().orElse(-1);
+            long fromTheBottom = tooEarly.stream().filter(card -> layerOf.get(card.getId()) == deepestLayer).count();
+            boolean onlyTheEpidemicCard = endedWithEpidemic && tooEarly.size() == 1 && fromTheBottom == 1;
+            if (tooEarly.isEmpty() || onlyTheEpidemicCard) continue;
+
+            String names = tooEarly.stream().map(CampaignCard::getCityName).sorted().collect(Collectors.joining(", "));
+            String pending = left.stream().map(CampaignCard::getCityName).sorted().collect(Collectors.joining(", "));
+            String message = periodName(current) + ": " + names + (tooEarly.size() == 1 ? " ha" : " han")
+                    + " sortit abans d'acabar les cartes de dalt de la pila (" + layerName(open) + "). Encara hi havia: "
+                    + pending + "."
+                    + (endedWithEpidemic && fromTheBottom > 0 ? " Una de les que no havien sortit pot ser la carta de l'epidèmia." : "");
+            issues.add(new DrawOrderIssue(current, tooEarly.stream().map(CampaignCard::getId)
+                    .collect(Collectors.toCollection(TreeSet::new)), message));
+        }
+        return issues;
+    }
+
+    public static String periodName(int period) {
+        return period == 0 ? "Inicial" : "Ep" + period;
+    }
+
+    private static String layerName(int layer) {
+        return layer == -1 ? "les que no havien sortit mai" : "les que van sortir a " + periodName(layer);
+    }
+
     private static String emptyIfNull(String text) {
         return text == null ? "" : text.trim();
     }

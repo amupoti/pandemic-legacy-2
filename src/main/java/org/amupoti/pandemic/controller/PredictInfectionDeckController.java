@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PredictInfectionDeckController {
 
+    private static final int INITIAL_INFECTION_CARDS = 9;
+
     static final String EPIDEMIC_MODE = "epidemia";
 
     private final CampaignService campaignService;
@@ -60,8 +62,10 @@ public class PredictInfectionDeckController {
         model.addAttribute("epidemicMode", EPIDEMIC_MODE.equals(mode));
         model.addAttribute("game", campaign.getGame());
         model.addAttribute("warnings", campaign.getWarnings());
-        model.addAttribute("initialInfection", campaign.getCurrentPeriod() == 0
-                ? infectionDeckData.getInfectionCardsInCurrentEpidemic().getCardsInEpidemic().size() : null);
+        // Before the first epidemic the turns' draws join the initial infection, so only count until it is complete
+        int drawnInCurrentPeriod = infectionDeckData.getInfectionCardsInCurrentEpidemic().getCardsInEpidemic().size();
+        model.addAttribute("initialInfection", campaign.getCurrentPeriod() == 0 && drawnInCurrentPeriod < INITIAL_INFECTION_CARDS
+                ? drawnInCurrentPeriod : null);
         model.addAttribute("lastAction", campaign.getLastEvent().map(event -> describe(campaign, event)).orElse(null));
         return "predict";
     }
