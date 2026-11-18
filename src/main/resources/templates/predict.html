@@ -18,11 +18,11 @@
 
 <!-- Cities that can be drawn from the bottom of the deck in the next epidemic -->
 <div class="epidemic-risk" th:if="${!#lists.isEmpty(epidemicRisk)}">
-    <div class="epidemic-risk-title">⚠️ Propera epidèmia: ciutat del fons del mall</div>
+    <div class="epidemic-risk-title">⚠️ Propera epidèmia: ciutat del fons de la pila</div>
     <div class="epidemic-risk-list">
         <span class="epidemic-risk-city" th:each="risk : ${epidemicRisk}"
               th:style="'--card-color:' + ${risk.color}"
-              th:title="${risk.cardsAtBottom} + ' carta/es al fons del mall'">
+              th:title="${risk.cardsAtBottom} + ' carta/es al fons de la pila'">
             <span class="epidemic-risk-name" th:text="${risk.city}"></span>
             <strong th:text="${#numbers.formatDecimal(risk.probability * 100, 0, 0)} + '%'"></strong>
         </span>
@@ -38,7 +38,7 @@
                 <tr th:each="infectionSet, setStat : ${infectionSets}">
                     <td>
                         <div class="section-header">
-                            <span class="title" th:text="${setStat.last} ? 'Fons del mall' : 'Pila d\'infecció'">Pila d'infecció</span>
+                            <span class="title" th:text="${setStat.last} ? 'Fons de la pila' : 'Pila d\'infecció'">Pila d'infecció</span>
                             <span class="card-count-inline" th:text="${#arrays.length(infectionSet.cardsInEpidemic)}"></span>
                         </div>
                         <div class="batch">
