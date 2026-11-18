@@ -11,21 +11,37 @@ import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class InfectionModelLoader {
 
-
+    /**
+     * @return the cards that are currently in the game
+     */
     public List<InfectionCard> loadFromGooglesheet(String spreadsheetId) throws IOException, GeneralSecurityException {
-
-        List<List<Object>> values = getSpreadsheetCells(spreadsheetId);
-
-        return values.stream()
-                .skip(1) //Ignore header
-                .map(this::createInfectionCardFromRow)
+        return loadAllFromGooglesheet(spreadsheetId).stream()
                 .filter(InfectionCard::isInTheGame)
                 .collect(Collectors.toList());
+    }
 
+    /**
+     * @return every card in the sheet, including destroyed cards and cards in box 6. The id of each card is its row
+     * position, starting at 0 after the header
+     */
+    public List<InfectionCard> loadAllFromGooglesheet(String spreadsheetId) throws IOException, GeneralSecurityException {
+        return loadAllFromRows(getSpreadsheetCells(spreadsheetId));
+    }
+
+    /**
+     * Same as {@link #loadAllFromGooglesheet(String)}, from rows already read from the sheet, header included
+     */
+    public List<InfectionCard> loadAllFromRows(List<List<Object>> rows) {
+        List<List<Object>> cardRows = rows.subList(1, rows.size()); //Ignore header
+
+        return IntStream.range(0, cardRows.size())
+                .mapToObj(index -> InfectionCardFactory.fromRow(index, cardRows.get(index)))
+                .collect(Collectors.toList());
     }
 
     private List<List<Object>> getSpreadsheetCells(String spreadsheetId) throws IOException, GeneralSecurityException {
@@ -35,9 +51,5 @@ public class InfectionModelLoader {
         BatchGetValuesResponse readResult = sheetsService.spreadsheets().values().batchGet(spreadsheetId).setRanges(ranges).execute();
 
         return readResult.getValueRanges().get(0).getValues();
-    }
-
-    private InfectionCard createInfectionCardFromRow(List<Object> row) {
-        return InfectionCardFactory.fromRow(row);
     }
 }

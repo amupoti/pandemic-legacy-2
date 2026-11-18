@@ -1,0 +1,47 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pandemic Legacy Season 2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&amp;family=Open+Sans:wght@600;700&amp;display=swap">
+    <link rel="stylesheet" th:href="@{/predict.css}">
+</head>
+<body>
+
+<div class="panel setup">
+    <h1 class="panel-title">Comença la campanya</h1>
+    <p>Encara no hi ha cap campanya desada. A partir d'aquí, les cartes robades, les epidèmies i els canvis de llegat
+        es fan des d'aquesta app.</p>
+    <p class="hint">Es desarà a <code th:text="${campaignFile}"></code></p>
+
+    <p class="flash error" th:if="${error}" th:text="${error}"></p>
+
+    <div class="setup-option" th:if="${sheetConfigured}">
+        <h2 class="panel-title">Des del Google Sheets</h2>
+        <p class="hint">Importa l'estat actual del full un sol cop: cartes, estats, etiquetes i fases.</p>
+        <form method="post" th:action="@{/import}">
+            <button type="submit" class="btn btn-primary">Importar del Google Sheets</button>
+        </form>
+    </div>
+
+    <div class="setup-option">
+        <h2 class="panel-title">Des d'un fitxer</h2>
+        <p class="hint">Una campanya descarregada abans des de "Cartes i llegat", o una còpia de <code>campaign-backups</code>.</p>
+        <form method="post" th:action="@{/campanya/restore}" enctype="multipart/form-data" class="toolbar left">
+            <input type="hidden" name="confirm" value="true">
+            <input type="file" name="file" accept=".json,application/json" required aria-label="Fitxer de campanya">
+            <button type="submit" class="btn">Carregar</button>
+        </form>
+    </div>
+
+    <div class="setup-option">
+        <h2 class="panel-title">Campanya nova</h2>
+        <p class="hint">Sense cap carta: les afegeixes tu a "Cartes i llegat".</p>
+        <form method="post" th:action="@{/new-campaign}">
+            <button type="submit" class="btn">Començar de zero</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

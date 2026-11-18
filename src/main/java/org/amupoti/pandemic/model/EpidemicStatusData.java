@@ -7,7 +7,7 @@ import static java.util.function.Predicate.not;
 @Value
 public class EpidemicStatusData {
 
-    private static final String INITIAL_EPIDEMIC = "Infección inicial";
+    private static final String INITIAL_EPIDEMIC = "Infecció inicial";
     public static final int INITIAL_INFECTION_CARDS = 9;
     String currentEpidemic;
     int turnsSinceLastEpidemic;

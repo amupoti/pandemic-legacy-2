@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.amupoti.pandemic.model.InfectionCard;
 import org.amupoti.pandemic.model.InfectionCardAppearances;
 
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static org.amupoti.pandemic.util.SheetsServiceUtil.parseBoolean;
 
@@ -29,12 +31,12 @@ public class InfectionCardFactory {
     public static final String GREY = "#3B3B3B";
     public static final String YELLOW = "#E9B824";
     public static final String LIGHT_GREEN = "#b3ffb3";
-    private static final String RED = "#E74C3C";
+    public static final String RED = "#E74C3C";
 
     /**
      * Row structure in the google sheet is the following:
      */
-    public static InfectionCard fromRow(List<Object> row) {
+    public static InfectionCard fromRow(int id, List<Object> row) {
 
         log.info(Arrays.toString(row.toArray()));
         String cityName = (String) row.get(0);
@@ -45,18 +47,30 @@ public class InfectionCardFactory {
         String color = getColorForCityName(cityName);
 
         InfectionCardAppearances infectionCardAppearances = InfectionCardAppearances.fromRow(row);
-        return new InfectionCard(cityName, label, inNetwork, destroyed, inBox6, infectionCardAppearances, color);
+        return new InfectionCard(id, cityName, label, inNetwork, destroyed, inBox6, infectionCardAppearances, color);
     }
 
     private static String getColorForCityName(String cityName) {
-        String cityWithoutDigits = cityName.replaceAll("\\d", "").trim();
-        if (blueCities.contains(cityWithoutDigits)) return LIGHT_BLUE;
-        if (blackCities.contains(cityWithoutDigits)) return GREY;
-        if (yellowCities.contains(cityWithoutDigits)) return YELLOW;
-        if (redCities.contains(cityWithoutDigits)) return RED;
+        String city = normalize(cityName.replaceAll("\\d", ""));
+        if (containsCity(blueCities, city)) return LIGHT_BLUE;
+        if (containsCity(blackCities, city)) return GREY;
+        if (containsCity(yellowCities, city)) return YELLOW;
+        if (containsCity(redCities, city)) return RED;
         if (cityName.contains("Desalmados")) return LIGHT_GREEN;
         return "white";
     }
 
+    private static boolean containsCity(List<String> cities, String normalizedCity) {
+        return cities.stream().map(InfectionCardFactory::normalize).anyMatch(normalizedCity::equals);
+    }
 
+    /**
+     * Ignores accents, case and extra spaces, so "Ciudad de México" matches "Ciudad de Mexico"
+     */
+    private static String normalize(String name) {
+        return Normalizer.normalize(name, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .trim()
+                .toLowerCase(Locale.ROOT);
+    }
 }

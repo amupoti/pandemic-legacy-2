@@ -9,6 +9,10 @@ import java.util.List;
 @Slf4j
 public class InfectionCard {
 
+    /**
+     * Stable identifier of the card inside the campaign
+     */
+    int id;
     String cityName;
     String label;
     boolean inNetwork;

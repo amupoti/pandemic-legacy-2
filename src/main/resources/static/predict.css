@@ -1,23 +1,10 @@
-@font-face {
-    font-family: myFirstFont;
-    src: url(http://db.onlinewebfonts.com/t/52da978e8062081e500f7f09a1bf8fc7.ttf);
-    font-weight: bold;
-}
-
 body {
     zoom: 1.15; /* bigger than default, for laptop screens */
-    font-family: Arial, sans-serif;
+    font-family: 'Open Sans', Arial, sans-serif;
     background-color: #f2f2f2;
+    color: #1d1d1d;
     padding: 20px;
     margin: 0;
-}
-
-h1 {
-    font-family: myFirstFont;
-    font-size: 62px;
-    text-align: center;
-    margin-bottom: 40px;
-    color: #D9534F;  /* Pandemic Legacy red */
 }
 
 /* Infection card, styled after the physical Pandemic Legacy S2 cards:
@@ -147,52 +134,6 @@ h1 {
     border-radius: 3px;
 }
 
-.InfectionDeck {
-    border-collapse: separate;
-    border-spacing: 10px;
-    width: 100%;
-}
-
-.InfectionSet {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    border-spacing: 20px 20px; /* horizontal and vertical spacing between cards */
-    border-collapse: separate; /* required to make spacing work */
-}
-
-th {
-    font-size: 24px;
-    text-align: center;
-    padding-bottom: 10px;
-}
-
-/* Batch container holding the badge, separator, and cards */
-.batch {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    display: flex;
-    flex-direction: column;  /* Stack the elements vertically */
-    align-items: center; /* Center all the elements horizontally */
-}
-
-/* Badge that will visually look like part of the separator */
-.card-count {
-    padding: 6px 12px;
-    background-color: #B33A3A;
-    color: white;
-    font-size: 30px;
-    font-weight: bold;
-    border-radius: 10px;
-    text-align: center;
-    min-width: 20px;
-    height: 20px;
-    line-height: 20px;
-    margin-bottom: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-    align-self: center;
-}
-
 /* Separator with matching color to the badge */
 .separator {
     width: 60%;  /* Keep the separator width smaller */
@@ -203,22 +144,6 @@ th {
     border-radius: 3px;  /* Slight rounded corners for the separator */
 }
 
-
-.InfectionDeck td span.card-count {
-    padding: 6px 12px;
-    font-size: 30px;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 10px;
-    min-width: 40px;
-    margin-bottom: 8px;
-}
-
-
-/* Ensure layout for Descartes de infección has the same clean alignment */
-.InfectionDeck td {
-    text-align: center;  /* Center the content horizontally */
-}
 
 .section-header {
     display: flex;
@@ -299,11 +224,257 @@ th {
     font-size: 13px;
 }
 
-/* Empty discard pile, the normal state right after an epidemic */
-.empty {
-    margin: 12px 4px;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 13px;
-    color: #666;
-    font-style: italic;
+/* Deck on the left, discard pile on the right; stacked on narrow screens */
+.piles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
 }
+
+.pile-column {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
+}
+
+.pile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 180px);
+    gap: 20px;
+    justify-content: center;
+}
+
+/* Phones: two columns of cards that fill the width, so a pile fits in a few screens */
+@media (max-width: 440px) {
+    body { zoom: 1; padding: 10px; }
+    .piles, .pile-column, .pile { width: 100%; }
+    .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
+    .Card { width: auto; min-width: 0; height: 92px; padding: 7px; }
+    .Card:hover { transform: none; }
+    .card-name { font-size: 14px; }
+    .card-name-band { padding-right: 20px; }
+}
+
+/* Invisible button over the whole card, so the card face keeps its look */
+.card-hit {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.card-hit:focus-visible {
+    outline: 3px solid #1f1f1f;
+    outline-offset: 2px;
+}
+
+form.Card:active { transform: scale(0.98); }
+
+/* Epidemic mode: the bottom layer is the one to pick from */
+.epidemic-mode .pile:not(.pile-bottom) .Card { opacity: 0.45; }
+.epidemic-mode .pile-bottom .Card { box-shadow: 0 0 0 3px #B33A3A, 0 3px 8px rgba(0, 0, 0, 0.45); }
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 10px;
+    margin: 0 auto 12px;
+}
+
+.toolbar form { margin: 0; }
+
+.last-action { font-size: 13px; }
+
+.btn {
+    display: inline-block;
+    font: 600 13px/1 'Oswald', 'Arial Narrow', sans-serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #1d1d1d;
+    background: #ffffff;
+    border: 1px solid #b9b9b9;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.btn:hover { border-color: #1d1d1d; }
+.btn:focus-visible { outline: 3px solid #1f1f1f; outline-offset: 2px; }
+
+.btn-danger, .btn-primary {
+    background: #B33A3A;
+    border-color: #B33A3A;
+    color: #ffffff;
+}
+
+.btn-danger:hover, .btn-primary:hover { background: #962f2f; border-color: #962f2f; }
+
+.flash {
+    width: fit-content;
+    max-width: 90%;
+    margin: 0 auto 12px;
+    padding: 6px 12px;
+    border-radius: 5px;
+    background: #e3f1e6;
+    color: #1f5130;
+    font-size: 13px;
+}
+
+.flash.error { background: #f8e1df; color: #7d2020; }
+
+.hint {
+    text-align: center;
+    color: #5d5d5d;
+    font-size: 12px;
+    margin: 0 0 12px;
+}
+
+.epidemic-banner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 14px;
+    width: fit-content;
+    max-width: 90%;
+    margin: 0 auto 14px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    background: #B33A3A;
+    color: #ffffff;
+}
+
+.empty {
+    color: #5d5d5d;
+    font-size: 13px;
+    max-width: 380px;
+    text-align: center;
+}
+
+/* Setup and campaign pages */
+.panel {
+    max-width: 760px;
+    margin: 0 auto 20px;
+    padding: 18px 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.panel-title {
+    font: 700 24px/1.1 'Oswald', Impact, 'Arial Narrow', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 0 0 10px;
+}
+
+.panel p { line-height: 1.5; }
+.panel .hint { text-align: left; }
+
+.card-rows { display: flex; flex-direction: column; }
+
+.card-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 8px 0;
+    border-top: 1px solid #e3e3e3;
+    border-left: 5px solid var(--card-color);
+    padding-left: 10px;
+}
+
+.card-row.out { opacity: 0.6; }
+
+.card-row input.name {
+    font: 600 14px/1.2 'Oswald', 'Arial Narrow', sans-serif;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.card-row input[type=text], .card-row select,
+.add-card input[type=text], .add-card input[type=number], .add-card select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 5px 6px;
+    font: inherit;
+    font-size: 13px;
+}
+
+.row-actions { display: flex; gap: 6px; white-space: nowrap; }
+
+.add-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) 70px minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    align-items: center;
+}
+
+@media (max-width: 640px) {
+    .card-row, .add-card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .row-actions, .add-card .btn { grid-column: 1 / -1; }
+}
+
+.toolbar.left { justify-content: flex-start; }
+
+.btn-quiet { color: #7d2020; border-color: transparent; background: transparent; }
+
+/* Number of cards in each state, linking to its list */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #ececec;
+    color: #1f1f1f;
+    font: 600 13px/1.3 'Open Sans', sans-serif;
+    text-decoration: none;
+}
+.chip:hover { background: #dedede; }
+
+.warnings { margin: 6px 0 0; padding-left: 20px; }
+
+.legacy-log { list-style: none; margin: 0; padding: 0; font-family: 'Open Sans', sans-serif; font-size: 13px; }
+.legacy-log li { padding: 6px 0; border-top: 1px solid #e3e3e3; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.log-game { color: #666; min-width: 70px; }
+
+/* Correction grid: the same table as the Google sheet */
+.grid-wrap { overflow-x: auto; }
+.grid { border-collapse: collapse; font-family: 'Open Sans', sans-serif; font-size: 13px; }
+.grid th, .grid td { padding: 4px 8px; border-bottom: 1px solid #e3e3e3; text-align: center; }
+.grid tbody th {
+    text-align: left;
+    white-space: nowrap;
+    border-left: 5px solid var(--card-color);
+    font-weight: 600;
+}
+.grid tbody th small { display: block; color: #7d2020; font-weight: 600; }
+.grid tr.out { opacity: 0.6; }
+.grid input { width: 18px; height: 18px; }
+.small-number { width: 60px; padding: 5px 6px; font: inherit; }
+
+/* Ways to start a campaign */
+.setup-option { border-top: 1px solid #e3e3e3; padding-top: 12px; margin-top: 14px; }
+.setup-option .panel-title { font-size: 16px; margin-bottom: 4px; }
+
+.phone-urls { margin: 4px 0; padding-left: 20px; font: 600 15px/1.6 'Open Sans', sans-serif; }

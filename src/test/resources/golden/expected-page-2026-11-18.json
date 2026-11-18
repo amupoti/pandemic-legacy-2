@@ -1,0 +1,162 @@
+{
+  "status" : {
+    "epidemic" : "5",
+    "infectionRate" : "4",
+    "turnsSinceLastEpidemic" : "1"
+  },
+  "nextEpidemic" : [ {
+    "city" : "Estambul",
+    "probability" : "18%"
+  }, {
+    "city" : "Lagos",
+    "probability" : "12%"
+  }, {
+    "city" : "Londres",
+    "probability" : "12%"
+  }, {
+    "city" : "Sao Paulo",
+    "probability" : "12%"
+  }, {
+    "city" : "Tripoli",
+    "probability" : "12%"
+  }, {
+    "city" : "Washington",
+    "probability" : "12%"
+  }, {
+    "city" : "Chicago",
+    "probability" : "6%"
+  }, {
+    "city" : "El Cairo",
+    "probability" : "6%"
+  }, {
+    "city" : "Jacksonville",
+    "probability" : "6%"
+  }, {
+    "city" : "New York",
+    "probability" : "6%"
+  } ],
+  "piles" : [ {
+    "title" : "Pila d'infecció",
+    "count" : "6",
+    "cards" : [ {
+      "name" : "Buenos Aires 1",
+      "appearances" : "×3",
+      "probability" : "93%"
+    }, {
+      "name" : "Buenos Aires 2",
+      "appearances" : "×1",
+      "probability" : "93%"
+    }, {
+      "name" : "Chicago 1",
+      "appearances" : "×5",
+      "probability" : "67%"
+    }, {
+      "name" : "El Cairo 2",
+      "appearances" : "×4",
+      "probability" : "67%"
+    }, {
+      "name" : "Jacksonville 2",
+      "appearances" : "×4",
+      "probability" : "67%"
+    }, {
+      "name" : "Los Angeles 1",
+      "label" : "Almacenamiento seguro",
+      "appearances" : "×2",
+      "probability" : "67%"
+    } ]
+  }, {
+    "title" : "Pila d'infecció",
+    "count" : "3",
+    "cards" : [ {
+      "name" : "Lagos 1",
+      "appearances" : "×3"
+    }, {
+      "name" : "New York 2",
+      "appearances" : "×2"
+    }, {
+      "name" : "Tripoli 1",
+      "appearances" : "×2"
+    } ]
+  }, {
+    "title" : "Pila d'infecció",
+    "count" : "1",
+    "cards" : [ {
+      "name" : "Santiago 1",
+      "appearances" : "×2"
+    } ]
+  }, {
+    "title" : "Fons de la pila",
+    "count" : "17",
+    "cards" : [ {
+      "name" : "Chicago 2",
+      "appearances" : "×0",
+      "probability" : "67%"
+    }, {
+      "name" : "El Cairo 3",
+      "appearances" : "×0",
+      "probability" : "67%"
+    }, {
+      "name" : "Estambul 1",
+      "appearances" : "×0"
+    }, {
+      "name" : "Estambul 2",
+      "appearances" : "×0"
+    }, {
+      "name" : "Estambul 3",
+      "appearances" : "×0"
+    }, {
+      "name" : "Jacksonville 3",
+      "appearances" : "×0",
+      "probability" : "67%"
+    }, {
+      "name" : "Lagos 2",
+      "appearances" : "×0"
+    }, {
+      "name" : "Lagos 3",
+      "appearances" : "×0"
+    }, {
+      "name" : "Londres 2",
+      "appearances" : "×0"
+    }, {
+      "name" : "Londres 3",
+      "appearances" : "×0"
+    }, {
+      "name" : "New York 3",
+      "appearances" : "×0"
+    }, {
+      "name" : "Sao Paulo 2",
+      "appearances" : "×0"
+    }, {
+      "name" : "Sao Paulo 3",
+      "appearances" : "×0"
+    }, {
+      "name" : "Tripoli 2",
+      "appearances" : "×0"
+    }, {
+      "name" : "Tripoli 3",
+      "appearances" : "×0"
+    }, {
+      "name" : "Washington 2",
+      "appearances" : "×0"
+    }, {
+      "name" : "Washington 3",
+      "appearances" : "×0"
+    } ]
+  }, {
+    "title" : "Descarts d'infecció",
+    "count" : "4",
+    "cards" : [ {
+      "name" : "El Cairo 1",
+      "appearances" : "×6"
+    }, {
+      "name" : "Londres 1",
+      "appearances" : "×6"
+    }, {
+      "name" : "New York 1",
+      "appearances" : "×6"
+    }, {
+      "name" : "Sao Paulo 1",
+      "appearances" : "×6"
+    } ]
+  } ]
+}

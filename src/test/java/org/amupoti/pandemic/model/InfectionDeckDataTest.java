@@ -126,6 +126,7 @@ class InfectionDeckDataTest {
 
     private static InfectionCard card(String cityName) {
         return new InfectionCard(
+                0,
                 cityName,
                 "",
                 true,

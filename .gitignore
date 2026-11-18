@@ -85,3 +85,6 @@ credentials.json
 
 # macOS
 .DS_Store
+
+# Campaign data saved by the app: keep campaign.json, the daily backups are local only
+campaign-backups/

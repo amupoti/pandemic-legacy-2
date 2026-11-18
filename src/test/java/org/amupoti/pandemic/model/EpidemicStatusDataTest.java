@@ -42,7 +42,7 @@ class EpidemicStatusDataTest {
 
     private static List<InfectionCard> cards(int count, List<Boolean> appearances) {
         return IntStream.range(0, count)
-                .mapToObj(i -> new InfectionCard("City " + i, "", true, false, false,
+                .mapToObj(i -> new InfectionCard(i, "City " + i, "", true, false, false,
                         new InfectionCardAppearances(appearances), ""))
                 .collect(Collectors.toList());
     }

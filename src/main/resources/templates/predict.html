@@ -2,18 +2,45 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Pandemic Legacy Season 2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&amp;family=Open+Sans:wght@600;700&amp;display=swap">
     <link rel="stylesheet" th:href="@{/predict.css}">
 </head>
-<body>
-
-<!--<h1>Pandemic Legacy Season 2</h1>-->
-
+<body th:classappend="${epidemicMode} ? 'epidemic-mode'">
 
 <div class="epidemic-status">
     <span class="epidemic-item">🦠 Epidèmia actual: <strong th:text="${epidemicData.currentEpidemic}"></strong></span>
     <span class="epidemic-item">🔥 Ritme d'infecció: <strong th:text="${epidemicData.infectionRate}"></strong></span>
     <span class="epidemic-item">⏱️ Torns des de l'última epidèmia: <strong th:text="${epidemicData.turnsSinceLastEpidemic}"></strong></span>
+    <span class="epidemic-item">📅 Partida: <strong th:text="${game}"></strong></span>
+</div>
+
+<!-- Actions taken during play -->
+<div class="toolbar">
+    <span class="last-action" th:if="${lastAction}">Última acció: <strong th:text="${lastAction}"></strong></span>
+    <form method="post" th:action="@{/undo}" th:if="${lastAction}">
+        <button type="submit" class="btn">↶ Desfer</button>
+    </form>
+    <a class="btn btn-danger" th:unless="${epidemicMode}" th:href="@{/(mode='epidemia')}">Epidèmia!</a>
+    <a class="btn" th:href="@{/campanya}">Cartes i llegat</a>
+    <a class="btn" th:href="@{/campanya/graella}">Graella</a>
+</div>
+
+<p class="flash error" th:if="${error}" th:text="${error}"></p>
+<p class="flash" th:if="${message}" th:text="${message}"></p>
+
+<div class="epidemic-banner" th:if="${epidemicMode}">
+    <span>Epidèmia: toca la carta que has tret del <strong>fons de la pila</strong>.</span>
+    <a class="btn" th:href="@{/}">Cancel·lar</a>
+</div>
+<p class="hint" th:if="${!epidemicMode and initialInfection != null}">
+    <strong th:text="'Infecció inicial: ' + ${initialInfection} + ' de 9 cartes.'"></strong>
+    Toca les cartes que robes per preparar la partida.</p>
+<p class="hint" th:if="${!epidemicMode and initialInfection == null}">Toca una carta de la pila d'infecció quan la robis.</p>
+<div class="flash error" th:if="${!#lists.isEmpty(warnings)}">
+    <strong>Revisa:</strong>
+    <ul class="warnings"><li th:each="warning : ${warnings}" th:text="${warning}"></li></ul>
+    <a th:href="@{/campanya/graella}">Obrir la graella de correccions</a>
 </div>
 
 <!-- Cities that can be drawn from the bottom of the deck in the next epidemic -->
@@ -29,91 +56,48 @@
     </div>
 </div>
 
-<table width="90%" align="center">
-    <tr valign="top">
-        <!-- Mazo de infección -->
-        <td>
-            <table class="InfectionDeck">
-                <tbody>
-                <tr th:each="infectionSet, setStat : ${infectionSets}">
-                    <td>
-                        <div class="section-header">
-                            <span class="title" th:text="${setStat.last} ? 'Fons de la pila' : 'Pila d\'infecció'">Pila d'infecció</span>
-                            <span class="card-count-inline" th:text="${#arrays.length(infectionSet.cardsInEpidemic)}"></span>
-                        </div>
-                        <div class="batch">
-                            <div class="separator"></div>
-                            <table class="InfectionSet">
-                                <tr th:each="i : ${#numbers.sequence(0, infectionSet.cardsInEpidemic.size() - 1, 2)}">
-                                    <td class="Card"
-                                        th:if="${i < infectionSet.cardsInEpidemic.size()}"
-                                        th:with="card1=${infectionSet.cardsInEpidemic[i]},prob=${probability[card1.cityName]}"
-                                        th:style="'--card-color:' + ${card1.color}">
-                                        <div th:replace="~{card :: cardFace(${card1}, ${prob})}"></div>
-                                    </td>
+<div class="piles">
+    <!-- Infection deck, from top to bottom -->
+    <div class="pile-column">
+        <div class="pile" th:each="infectionSet, setStat : ${infectionSets}"
+             th:classappend="${setStat.last} ? 'pile-bottom'">
+            <div class="section-header">
+                <span class="title" th:text="${setStat.last} ? 'Fons de la pila' : 'Pila d\'infecció'">Pila d'infecció</span>
+                <span class="card-count-inline" th:text="${#lists.size(infectionSet.cardsInEpidemic)}"></span>
+            </div>
+            <div class="separator"></div>
+            <div class="card-grid">
+                <form class="Card" method="post"
+                      th:each="card : ${infectionSet.cardsInEpidemic}"
+                      th:action="${epidemicMode} ? @{/epidemic/{id}(id=${card.id})} : @{/draw/{id}(id=${card.id})}"
+                      th:style="'--card-color:' + ${card.color}">
+                    <div th:replace="~{card :: cardFace(${card}, ${probability[card.cityName]})}"></div>
+                    <button type="submit" class="card-hit"
+                            th:title="${epidemicMode} ? 'Epidèmia a ' + ${card.cityName} : 'Robar ' + ${card.cityName}"
+                            th:attr="aria-label=${epidemicMode} ? 'Epidèmia a ' + ${card.cityName} : 'Robar ' + ${card.cityName}"></button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-
-
-
-                                    <td class="Card"
-                                        th:if="${i + 1 < infectionSet.cardsInEpidemic.size()}"
-                                        th:with="card2=${infectionSet.cardsInEpidemic[i + 1]},
-             prob=${probability[card2.cityName]}"
-                                        th:style="'--card-color:' + ${card2.color}">
-                                        <div th:replace="~{card :: cardFace(${card2}, ${prob})}"></div>
-                                    </td>
-
-                                </tr>
-                            </table>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </td>
-
-
-
-        <!-- Descartes de infección -->
-        <td>
-            <table class="InfectionDeck">
-                <tbody>
-                <tr>
-                    <td>
-                        <div class="section-header">
-                            <span class="title">Descarts d'infecció</span>
-                            <span class="card-count-inline" th:text="${#arrays.length(infectionDiscarded.cardsInEpidemic)}"></span>
-                        </div>
-                        <div class="batch">
-                            <div class="separator"></div>
-                            <p class="empty" th:if="${#lists.isEmpty(infectionDiscarded.cardsInEpidemic)}">Encara no s'ha robat cap carta des de l'última epidèmia.</p>
-                            <table class="InfectionSet" th:unless="${#lists.isEmpty(infectionDiscarded.cardsInEpidemic)}">
-                                <tr th:each="i : ${#numbers.sequence(0, infectionDiscarded.cardsInEpidemic.size() - 1, 2)}">
-                                    <td class="Card"
-                                        th:if="${i < infectionDiscarded.cardsInEpidemic.size()}"
-                                        th:with="card1=${infectionDiscarded.cardsInEpidemic[i]}"
-                                        th:style="'--card-color:' + ${card1.color}">
-                                        <div th:replace="~{card :: cardFace(${card1}, null)}"></div>
-                                    </td>
-
-                                    <td class="Card"
-                                        th:if="${i + 1 < infectionDiscarded.cardsInEpidemic.size()}"
-                                        th:with="card2=${infectionDiscarded.cardsInEpidemic[i + 1]}"
-                                        th:style="'--card-color:' + ${card2.color}">
-                                        <div th:replace="~{card :: cardFace(${card2}, null)}"></div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </td>
-    </tr>
-</table>
-
+    <!-- Infection discard pile -->
+    <div class="pile-column">
+        <div class="pile">
+            <div class="section-header">
+                <span class="title">Descarts d'infecció</span>
+                <span class="card-count-inline" th:text="${#lists.size(infectionDiscarded.cardsInEpidemic)}"></span>
+            </div>
+            <div class="separator"></div>
+            <p class="empty" th:if="${#lists.isEmpty(infectionDiscarded.cardsInEpidemic)}">Encara no s'ha robat cap carta des de l'última epidèmia.</p>
+            <div class="card-grid">
+                <div class="Card" th:each="card : ${infectionDiscarded.cardsInEpidemic}"
+                     th:style="'--card-color:' + ${card.color}">
+                    <div th:replace="~{card :: cardFace(${card}, null)}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

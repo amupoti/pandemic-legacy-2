@@ -1,0 +1,140 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cartes i llegat · Pandemic Legacy Season 2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&amp;family=Open+Sans:wght@600;700&amp;display=swap">
+    <link rel="stylesheet" th:href="@{/predict.css}">
+</head>
+<body>
+
+<div class="toolbar">
+    <a class="btn" th:href="@{/}">← Tornar a la partida</a>
+    <a class="btn" th:href="@{/campanya/graella}">Graella de correccions</a>
+    <a class="btn" href="#nova-partida">Partida nova</a>
+</div>
+
+<p class="flash error" th:if="${error}" th:text="${error}"></p>
+<p class="flash" th:if="${message}" th:text="${message}"></p>
+<div class="flash error" th:if="${!#lists.isEmpty(warnings)}">
+    <strong>Revisa:</strong>
+    <ul class="warnings"><li th:each="warning : ${warnings}" th:text="${warning}"></li></ul>
+</div>
+
+<div class="panel">
+    <h1 class="panel-title" th:text="'Cartes i llegat · Partida ' + ${campaign.game}">Cartes i llegat</h1>
+    <p class="hint"><strong th:text="${cardsInGame} + ' cartes a la pila d\'infecció de ' + ${#lists.size(campaign.cards)} + '.'"></strong>
+        Només compten les cartes a la xarxa. Una carta pot passar de qualsevol estat a qualsevol altre, en qualsevol moment.</p>
+    <div class="chips">
+        <a class="chip" th:each="group : ${groups}" th:href="'#estat-' + ${group.state}"
+           th:text="${group.state.description} + ': ' + ${#lists.size(group.cards)}"></a>
+    </div>
+</div>
+
+<div class="panel" th:each="group : ${groups}" th:id="'estat-' + ${group.state}" th:if="${!#lists.isEmpty(group.cards)}">
+    <h2 class="panel-title" th:text="${group.state.description} + ' (' + ${#lists.size(group.cards)} + ')'"></h2>
+    <div class="card-rows">
+        <form class="card-row" method="post"
+              th:each="card : ${group.cards}"
+              th:id="'card-' + ${card.id}"
+              th:action="@{/campanya/cards/{id}(id=${card.id})}"
+              th:classappend="${!card.inTheGame} ? 'out'"
+              th:style="'--card-color:' + ${card.color}">
+            <input type="text" name="cityName" class="name" th:value="${card.cityName}" required
+                   th:attr="aria-label='Nom de ' + ${card.cityName}">
+            <input type="text" name="label" placeholder="Etiqueta" th:value="${card.label}"
+                   th:attr="aria-label='Etiqueta de ' + ${card.cityName}">
+            <select name="color" th:attr="aria-label='Color de ' + ${card.cityName}">
+                <option th:each="color : ${colors}" th:value="${color.value}" th:text="${color.description}"
+                        th:selected="${#strings.equalsIgnoreCase(color.value, card.color)}"></option>
+            </select>
+            <select name="state" th:attr="aria-label='Estat de ' + ${card.cityName}">
+                <option th:each="option : ${states}" th:value="${option}" th:text="${option.description}"
+                        th:selected="${option == card.state}"></option>
+            </select>
+            <span class="row-actions">
+                <button type="submit" class="btn">Desar</button>
+                <button type="submit" class="btn btn-quiet" th:if="${#sets.isEmpty(card.drawnInPeriods)}"
+                        th:formaction="@{/campanya/cards/{id}/delete(id=${card.id})}"
+                        th:attr="onclick='return confirm(\'Esborrar ' + ${card.cityName} + '?\')'"
+                        title="Només per a cartes entrades per error">Esborrar</button>
+            </span>
+        </form>
+    </div>
+</div>
+
+<div class="panel" id="afegir">
+    <h2 class="panel-title">Afegir cartes</h2>
+    <p class="hint">Una carta nova no ha sortit mai, així que va al fons de la pila. Amb més d'una, es numeren
+        després de les que ja hi ha: "Lagos" × 2 al costat de "Lagos 3" afegeix Lagos 4 i Lagos 5.</p>
+    <form class="add-card" method="post" th:action="@{/campanya/cards}">
+        <input type="text" id="new-city" name="cityName" placeholder="Ciutat" required aria-label="Ciutat">
+        <input type="number" id="new-count" name="count" value="1" min="1" max="10" aria-label="Quantes cartes">
+        <input type="text" id="new-label" name="label" placeholder="Etiqueta (opcional)" aria-label="Etiqueta">
+        <select id="new-color" name="color" aria-label="Color">
+            <option th:each="color : ${colors}" th:value="${color.value}" th:text="${color.description}"></option>
+        </select>
+        <select id="new-state" name="state" aria-label="Estat">
+            <option th:each="option : ${states}" th:value="${option}" th:text="${option.description}"></option>
+        </select>
+        <button type="submit" class="btn btn-primary">Afegir</button>
+    </form>
+</div>
+
+<div class="panel" id="nova-partida">
+    <h2 class="panel-title" th:text="'Començar la partida ' + ${campaign.game + 1}"></h2>
+    <p>Totes les cartes tornen a la pila d'infecció i comença la infecció inicial. Es mantenen les cartes, els estats
+        i les etiquetes. Fes abans els canvis de llegat d'entre partides: les cartes noves, les que surten de la xarxa
+        i les que van a la caixa.</p>
+    <p class="hint"><strong th:text="'La partida ' + ${campaign.game + 1} + ' començarà amb ' + ${cardsInGame} + ' cartes a la pila d\'infecció.'"></strong></p>
+    <form method="post" th:action="@{/campanya/new-game}" class="toolbar left">
+        <label><input type="checkbox" id="confirm-new-game" name="confirm" value="true"> La partida <span th:text="${campaign.game}"></span> ha acabat</label>
+        <button type="submit" class="btn btn-danger">Començar partida nova</button>
+    </form>
+</div>
+
+<div class="panel">
+    <h2 class="panel-title">Historial de llegat</h2>
+    <p class="empty" th:if="${#lists.isEmpty(legacyLog)}">Encara no s'ha fet cap canvi des de l'app.</p>
+    <ul class="legacy-log">
+        <li th:each="change : ${legacyLog}">
+            <span class="log-game" th:text="'Partida ' + ${change.game}"></span>
+            <strong th:text="${change.card}"></strong>
+            <span th:text="${change.change}"></span>
+        </li>
+    </ul>
+</div>
+
+<div class="panel" id="mobil" th:if="${!#lists.isEmpty(phoneUrls)}">
+    <h2 class="panel-title">Obrir-ho al mòbil</h2>
+    <p class="hint">Amb el mòbil a la mateixa wifi que aquest ordinador, obre:</p>
+    <ul class="phone-urls"><li th:each="url : ${phoneUrls}"><a th:href="${url}" th:text="${url}"></a></li></ul>
+    <p class="hint">Si no carrega, revisa que el tallafoc del Mac permeti connexions a Java.</p>
+</div>
+
+<div class="panel" id="copies">
+    <h2 class="panel-title">Còpies de seguretat</h2>
+    <p class="hint">Cada canvi es desa a <code th:text="${campaignFile}"></code> i es guarda una còpia per dia
+        (les últimes 30) a la carpeta <code>campaign-backups</code> del costat.</p>
+    <p th:if="${!#lists.isEmpty(backups)}">Còpies: <span th:text="${#strings.listJoin(backups, ', ')}"></span></p>
+    <div class="toolbar left">
+        <a class="btn" th:href="@{/campanya/export}">Descarregar la campanya (JSON)</a>
+    </div>
+    <form method="post" th:action="@{/campanya/restore}" enctype="multipart/form-data" class="toolbar left">
+        <input type="file" name="file" accept=".json,application/json" required aria-label="Fitxer de campanya">
+        <label><input type="checkbox" name="confirm" value="true"> Substituir la campanya actual</label>
+        <button type="submit" class="btn">Restaurar</button>
+    </form>
+</div>
+
+<div class="panel">
+    <h2 class="panel-title">Tornar a importar del Google Sheets</h2>
+    <p class="hint">Substitueix tota la campanya pel contingut del full. Es perden les cartes robades i els canvis fets aquí.</p>
+    <form method="post" th:action="@{/campanya/import}" class="toolbar left">
+        <label><input type="checkbox" id="confirm-import" name="confirm" value="true"> Entenc que es perdran els canvis</label>
+        <button type="submit" class="btn">Reimportar</button>
+    </form>
+</div>
+
+</body>
+</html>
