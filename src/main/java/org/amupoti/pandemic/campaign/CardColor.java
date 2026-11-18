@@ -13,7 +13,6 @@ public enum CardColor {
     YELLOW(InfectionCardFactory.YELLOW, "Groc"),
     BLACK(InfectionCardFactory.GREY, "Negre"),
     RED(InfectionCardFactory.RED, "Vermell"),
-    SOULLESS(InfectionCardFactory.LIGHT_GREEN, "Desalmats"),
     NONE("white", "Sense color");
 
     private final String value;
@@ -34,6 +33,13 @@ public enum CardColor {
 
     public static List<CardColor> all() {
         return Arrays.asList(values());
+    }
+
+    /**
+     * @return whether the value is one of the colours offered in the list
+     */
+    public static boolean isKnown(String value) {
+        return Arrays.stream(values()).anyMatch(color -> color.value.equalsIgnoreCase(value));
     }
 
     /**

@@ -395,7 +395,7 @@ form.Card:active { transform: scale(0.98); }
 
 .card-row {
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 1fr) 11.5rem;
     align-items: center;
     gap: 8px 12px;
     padding: 8px 0;

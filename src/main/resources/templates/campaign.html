@@ -47,6 +47,8 @@
             <select name="color" th:attr="aria-label='Color de ' + ${card.cityName}">
                 <option th:each="color : ${colors}" th:value="${color.value}" th:text="${color.description}"
                         th:selected="${#strings.equalsIgnoreCase(color.value, card.color)}"></option>
+                <option th:unless="${T(org.amupoti.pandemic.campaign.CardColor).isKnown(card.color)}"
+                        th:value="${card.color}" selected>Altre</option>
             </select>
             <select name="state" th:attr="aria-label='Estat de ' + ${card.cityName}">
                 <option th:each="option : ${states}" th:value="${option}" th:text="${option.description}"

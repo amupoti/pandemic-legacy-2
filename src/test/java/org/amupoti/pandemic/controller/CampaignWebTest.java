@@ -281,6 +281,18 @@ class CampaignWebTest {
     }
 
     @Test
+    void theColourListDoesNotNameTheSoullessButKeepsTheirColour() throws Exception {
+        mvc.perform(post("/import"));
+        campaignService.updateCard(GAMMA, "Gamma", "", "#b3ffb3", campaign().card(GAMMA).getState());
+
+        String html = mvc.perform(get("/campanya")).andReturn().getResponse().getContentAsString();
+        assertThat(html).doesNotContain("Desalmats");
+        Document page = Jsoup.parse(html);
+        assertThat(page.selectFirst("#card-" + GAMMA + " select[name=color] option[selected]").val()).isEqualTo("#b3ffb3");
+        assertThat(page.selectFirst("#card-" + ALPHA + " select[name=color] option:containsOwn(Altre)")).isNull();
+    }
+
+    @Test
     void theGridShowsTheSheetAndSavesCorrections() throws Exception {
         mvc.perform(post("/import"));
         String grid = mvc.perform(get("/campanya/graella"))
