@@ -6,13 +6,12 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&amp;family=Open+Sans:wght@600;700&amp;display=swap">
     <link rel="stylesheet" th:href="@{/predict.css}">
 </head>
-<body>
+<body class="app-page">
 
-<div class="toolbar">
-    <a class="btn" th:href="@{/}">← Tornar a la partida</a>
-    <a class="btn" th:href="@{/campanya/graella}">Graella de correccions</a>
-    <a class="btn" href="#nova-partida">Partida nova</a>
-</div>
+<header th:replace="~{layout :: pageBar('Cartes i llegat', ~{:: #new-game-link})}"></header>
+<!-- Only shown inside the top bar -->
+<th:block th:if="${false}"><a id="new-game-link" class="btn topbar-action" href="#nova-partida">Partida nova</a></th:block>
+<div th:replace="~{layout :: menu('llegat')}"></div>
 
 <p class="flash error" th:if="${error}" th:text="${error}"></p>
 <p class="flash" th:if="${message}" th:text="${message}"></p>

@@ -167,90 +167,168 @@ body {
     text-align: center;
 }
 
-/* Collapsible game info at the top of the page */
-.info-panel {
-    width: fit-content;
-    max-width: 100%;
-    margin: 0 auto 10px;
-}
+/* Every page with a campaign: a slim bar on top and a side menu, so the content gets the screen */
+.app-page { padding: 0 12px 16px; }
 
-.info-panel > summary {
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
     align-items: center;
-    gap: 4px 14px;
-    padding: 4px 12px;
-    border-radius: 6px;
-    background: #f0f8ff;
-    border-left: 4px solid #B33A3A;
-    font-size: 13px;
-    cursor: pointer;
-    list-style: none;
-    width: fit-content;
-    margin: 0 auto;
+    gap: 10px;
+    margin: 0 -12px 10px;
+    padding: 6px 12px;
+    background: #2b2522;
+    color: #f2efe6;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-.info-panel > summary::-webkit-details-marker { display: none; }
-.info-panel > summary:focus-visible { outline: 3px solid #1f1f1f; outline-offset: 2px; }
+.topbar form { margin: 0; }
 
-.info-toggle {
-    font: 600 13px/1 'Oswald', 'Arial Narrow', sans-serif;
+.topbar-menu {
+    position: relative;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.topbar-menu:hover { background: rgba(255, 255, 255, 0.12); }
+.topbar-menu:focus-visible { outline: 3px solid #f2efe6; outline-offset: 1px; }
+
+/* Red dot when there are warnings to review */
+.topbar-menu.has-warnings::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #e0574f;
+    box-shadow: 0 0 0 2px #2b2522;
+}
+
+.topbar-stats {
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.topbar-stats strong { font: 600 16px/1 'Oswald', 'Arial Narrow', sans-serif; }
+
+.topbar-last {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+    font-size: 13px;
+    color: #cfc8bd;
+}
+
+.topbar .btn-danger, .topbar-action { margin-left: auto; }
+
+.topbar-title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font: 600 18px/1 'Oswald', 'Arial Narrow', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
-.info-toggle::before { content: "▸ "; }
-.info-panel[open] .info-toggle::before { content: "▾ "; }
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font: 600 18px/1 'Open Sans', Arial, sans-serif;
+}
 
-.info-brief { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; }
-.info-panel[open] .info-brief { display: none; }
-.info-panel[open] > summary { margin-bottom: 8px; box-sizing: border-box; }
+/* Side menu */
+.drawer {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(340px, 88vw);
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #f6f4ee;
+    color: #1d1d1d;
+    box-shadow: 4px 0 18px rgba(0, 0, 0, 0.35);
+    overflow-y: auto;
+}
 
-/* Compact epidemic status bar at the top of the page */
-.epidemic-status {
+.drawer::backdrop { background: rgba(0, 0, 0, 0.45); }
+
+.drawer[open] { animation: drawer-in 0.18s ease-out; }
+@keyframes drawer-in { from { transform: translateX(-100%); } }
+@media (prefers-reduced-motion: reduce) { .drawer[open] { animation: none; } }
+
+.drawer-head {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px 20px;
-    width: fit-content;
-    margin: 0 auto 12px;
-    padding: 4px 14px;
-    border-radius: 6px;
-    background: #f0f8ff;
-    border-left: 4px solid #B33A3A;
-    font-size: 13px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px 10px 16px;
+    background: #2b2522;
+    color: #f2efe6;
 }
 
-.epidemic-item strong {
-    font-size: 15px;
-}
+.drawer-head .btn-icon { background: transparent; border-color: transparent; color: inherit; }
 
-/* Per-city probability of being the bottom card drawn in the next epidemic */
-.epidemic-risk {
-    width: fit-content;
-    max-width: 90%;
-    margin: 0 auto 16px;
-    padding: 8px 14px;
-    border-radius: 6px;
-    background: #fff4e5;
-    border-left: 4px solid #B33A3A;
-    text-align: center;
-}
-
-.epidemic-risk-title {
-    font: 600 14px/1.2 'Oswald', 'Arial Narrow', sans-serif;
+.drawer-title {
+    font: 700 18px/1 'Oswald', Impact, 'Arial Narrow', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    margin-bottom: 6px;
 }
 
-.epidemic-risk-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
+.drawer-nav { display: flex; flex-direction: column; border-bottom: 1px solid #d8d3c8; }
+
+.drawer-nav a {
+    padding: 12px 16px;
+    color: inherit;
+    text-decoration: none;
+    font: 600 15px/1.2 'Oswald', 'Arial Narrow', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
+
+.drawer-nav a + a { border-top: 1px solid #e4dfd4; }
+.drawer-nav a:hover, .drawer-nav a:focus-visible { background: #ebe6db; outline: none; }
+.drawer-nav a.current { box-shadow: inset 4px 0 0 #B33A3A; background: #ebe6db; }
+
+.drawer-section { padding: 14px 16px; border-bottom: 1px solid #d8d3c8; }
+
+.drawer-section h2 {
+    margin: 0 0 8px;
+    font: 600 13px/1.2 'Oswald', 'Arial Narrow', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8a2c2c;
+}
+
+.epidemic-status { display: grid; gap: 4px; font-size: 14px; }
+
+.epidemic-item { display: flex; justify-content: space-between; gap: 12px; }
+.epidemic-item strong { font-size: 15px; }
+
+.epidemic-risk-list { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .epidemic-risk-city {
     display: inline-flex;
@@ -258,11 +336,43 @@ body {
     gap: 6px;
     padding: 3px 8px;
     border-radius: 4px;
-    background: #f6f4ee;
+    background: #ffffff;
     border-left: 5px solid var(--card-color);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     font-size: 13px;
 }
+
+.drawer-help { margin: 0 0 8px; font-size: 13px; line-height: 1.5; color: #4a4a4a; }
+.drawer-help:last-child { margin-bottom: 0; }
+
+.warnings-box { background: #f8e1df; color: #7d2020; font-size: 13px; }
+.warnings-box h2 { color: #7d2020; }
+.warnings-box .warnings { margin: 0 0 6px; padding-left: 18px; }
+.warnings-box a { color: inherit; }
+
+.warnings-chip {
+    display: block;
+    margin: 0 auto 10px;
+    padding: 5px 12px;
+    border: 0;
+    border-radius: 14px;
+    background: #f8e1df;
+    color: #7d2020;
+    font: 600 13px/1.2 'Open Sans', Arial, sans-serif;
+    cursor: pointer;
+}
+
+/* Smaller pile headers, so the cards start higher */
+.predict-page .section-header { font-size: 16px; margin-bottom: 4px; gap: 6px; }
+.predict-page .section-header .title {
+    font: 600 16px/1.1 'Oswald', 'Arial Narrow', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.predict-page .card-count-inline { font-size: 12px; padding: 2px 6px; min-width: 0; box-shadow: none; }
+.predict-page .separator { height: 3px; margin-bottom: 8px; }
+.predict-page .piles { gap: 16px 32px; }
+.predict-page .pile-column { gap: 16px; }
 
 /* Deck on the left, discard pile on the right; stacked on narrow screens */
 .piles {
@@ -303,6 +413,15 @@ body {
 /* Phones: three columns of cards that fill the width, so a pile fits in a few screens */
 @media (max-width: 440px) {
     body { zoom: 1; padding: 10px; }
+    .app-page { padding: 0 8px 12px; }
+    .topbar { margin: 0 -8px 8px; padding: 6px 8px; gap: 8px; }
+    .topbar-stats { gap: 8px; }
+    .topbar-last { display: none; }
+    .stat-icon { display: none; }
+    .topbar .stat-label { font-size: 12px; }
+    .topbar .btn-danger { padding: 8px 9px; }
+    .undo-text { display: none; }
+    .topbar .btn-undo { width: 44px; height: 40px; padding: 0; justify-content: center; }
     .piles, .pile-column, .pile { width: 100%; }
     .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: 100%; }
     .Card { width: auto; min-width: 0; height: 72px; padding: 4px; }
@@ -526,3 +645,24 @@ form.Card:active { transform: scale(0.98); }
 .setup-option .panel-title { font-size: 16px; margin-bottom: 4px; }
 
 .phone-urls { margin: 4px 0; padding-left: 20px; font: 600 15px/1.6 'Open Sans', sans-serif; }
+
+/* Undo in the dark top bar: big enough to hit in a hurry */
+.btn-undo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 14px 0 10px;
+    font-size: 15px;
+}
+.undo-icon { font: 700 26px/1 'Open Sans', Arial, sans-serif; }
+
+.topbar .btn-undo,
+.topbar .btn-icon {
+    background: transparent;
+    border-color: rgba(242, 239, 230, 0.35);
+    color: #f2efe6;
+}
+.topbar .btn-undo:hover, .topbar .btn-icon:hover { border-color: #f2efe6; }
+
+.stat-label { font-size: 13px; color: #cfc8bd; }

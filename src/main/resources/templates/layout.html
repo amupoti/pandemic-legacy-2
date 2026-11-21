@@ -1,0 +1,91 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Pieces shared by every page once a campaign exists: the top bar and the side menu.
+     They read "warnings" from the page model, to flag what needs reviewing. -->
+
+<button th:fragment="menuButton" type="button" class="topbar-menu" id="menu-open" aria-controls="menu"
+        aria-label="Obrir el menú" th:classappend="${!#lists.isEmpty(warnings)} ? 'has-warnings'">☰</button>
+
+<!-- Top bar of the secondary pages: menu, page title and, optionally, one action on the right -->
+<header th:fragment="pageBar(title, action)" class="topbar">
+    <button th:replace="~{layout :: menuButton}"></button>
+    <h1 class="topbar-title" th:text="${title}"></h1>
+    <th:block th:replace="${action}"></th:block>
+</header>
+
+<!-- Side menu: the pages, the warnings and, on the play page, the game info.
+     A modal dialog, closed with ✕, Escape or a tap outside it -->
+<th:block th:fragment="menu(current)">
+<dialog class="drawer" id="menu" aria-label="Menú">
+    <div class="drawer-head">
+        <span class="drawer-title">Pandemic Legacy S2</span>
+        <button type="button" class="btn btn-icon" id="menu-close" aria-label="Tancar el menú">✕</button>
+    </div>
+
+    <nav class="drawer-nav">
+        <a th:href="@{/}" th:classappend="${current == 'partida'} ? 'current'"
+           th:attr="aria-current=${current == 'partida'} ? 'page'">Partida</a>
+        <a th:href="@{/campanya}" th:classappend="${current == 'llegat'} ? 'current'"
+           th:attr="aria-current=${current == 'llegat'} ? 'page'">Cartes i llegat</a>
+        <a th:href="@{/campanya/graella}" th:classappend="${current == 'graella'} ? 'current'"
+           th:attr="aria-current=${current == 'graella'} ? 'page'">Graella de correccions</a>
+    </nav>
+
+    <div class="drawer-section warnings-box" th:if="${!#lists.isEmpty(warnings)}">
+        <h2>Revisa</h2>
+        <ul class="warnings"><li th:each="warning : ${warnings}" th:text="${warning}"></li></ul>
+        <a th:href="@{/campanya/graella}" th:unless="${current == 'graella'}">Obrir la graella de correccions</a>
+    </div>
+
+    <th:block th:if="${current == 'partida'}"><th:block th:replace="~{layout :: playInfo}"></th:block></th:block>
+</dialog>
+<script>
+    (function () {
+        var menu = document.getElementById('menu');
+        function open() { menu.showModal(); }
+        document.getElementById('menu-open').addEventListener('click', open);
+        Array.prototype.forEach.call(document.querySelectorAll('[data-open-menu]'), function (b) { b.addEventListener('click', open); });
+        document.getElementById('menu-close').addEventListener('click', function () { menu.close(); });
+        menu.addEventListener('click', function (e) { if (e.target === menu) menu.close(); });
+    })();
+</script>
+</th:block>
+
+<!-- Game info, only in the menu of the play page -->
+<th:block th:fragment="playInfo">
+<div class="drawer-section">
+    <h2>Partida</h2>
+    <div class="epidemic-status">
+        <span class="epidemic-item">Epidèmia actual <strong th:text="${epidemicData.currentEpidemic}"></strong></span>
+        <span class="epidemic-item">Ritme d'infecció <strong th:text="${epidemicData.infectionRate}"></strong></span>
+        <span class="epidemic-item">Torns des de l'última epidèmia <strong th:text="${epidemicData.turnsSinceLastEpidemic}"></strong></span>
+        <span class="epidemic-item" title="El % de cada carta compta només aquestes cartes">Cartes per robar aquest torn <strong th:text="${epidemicData.cardsLeftThisTurn}"></strong></span>
+        <span class="epidemic-item">Partida <strong th:text="${game}"></strong></span>
+    </div>
+</div>
+
+<!-- Cities that can be drawn from the bottom of the deck in the next epidemic -->
+<div class="drawer-section epidemic-risk" th:if="${!#lists.isEmpty(epidemicRisk)}">
+    <h2>Propera epidèmia: fons de la pila</h2>
+    <div class="epidemic-risk-list">
+        <span class="epidemic-risk-city" th:each="risk : ${epidemicRisk}"
+              th:style="'--card-color:' + ${risk.color}"
+              th:title="${risk.cardsAtBottom} + ' carta/es al fons de la pila'">
+            <span class="epidemic-risk-name" th:text="${risk.city}"></span>
+            <strong th:text="${#numbers.formatDecimal(risk.probability * 100, 0, 0)} + '%'"></strong>
+        </span>
+    </div>
+</div>
+
+<div class="drawer-section">
+    <h2>Com funciona</h2>
+    <p class="drawer-help">Toca una carta de la pila d'infecció quan la robis. El % de cada carta és la probabilitat
+        que la ciutat surti en les cartes que queden per robar aquest torn.</p>
+    <p class="drawer-help">Quan surti una epidèmia, prem <strong>Epidèmia!</strong> i toca la carta del fons de la pila.</p>
+</div>
+</th:block>
+
+</body>
+</html>

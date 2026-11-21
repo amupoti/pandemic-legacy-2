@@ -6,12 +6,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&amp;family=Open+Sans:wght@600;700&amp;display=swap">
     <link rel="stylesheet" th:href="@{/predict.css}">
 </head>
-<body>
+<body class="app-page">
 
-<div class="toolbar">
-    <a class="btn" th:href="@{/}">← Tornar a la partida</a>
-    <a class="btn" th:href="@{/campanya}">Cartes i llegat</a>
-</div>
+<header th:replace="~{layout :: pageBar('Graella de correccions', ~{})}"></header>
+<div th:replace="~{layout :: menu('graella')}"></div>
 
 <p class="flash error" th:if="${error}" th:text="${error}"></p>
 <p class="flash" th:if="${message}" th:text="${message}"></p>
