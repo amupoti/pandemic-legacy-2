@@ -8,12 +8,37 @@
 </head>
 <body th:classappend="${epidemicMode} ? 'epidemic-mode'">
 
+<!-- Game info, folded away so the cards fit on screen; the summary keeps the key numbers -->
+<details class="info-panel" id="info-panel">
+<summary>
+    <span class="info-toggle">Informació</span>
+    <span class="info-brief">
+        <span>🦠 <strong th:text="${epidemicData.currentEpidemic}"></strong></span>
+        <span>🔥 Ritme <strong th:text="${epidemicData.infectionRate}"></strong></span>
+        <span>⏱️ Torns <strong th:text="${epidemicData.turnsSinceLastEpidemic}"></strong></span>
+        <span th:if="${!#lists.isEmpty(epidemicRisk)}">⚠️ Fons: <strong th:text="${epidemicRisk[0].city} + ' ' + ${#numbers.formatDecimal(epidemicRisk[0].probability * 100, 0, 0)} + '%'"></strong></span>
+    </span>
+</summary>
 <div class="epidemic-status">
     <span class="epidemic-item">🦠 Epidèmia actual: <strong th:text="${epidemicData.currentEpidemic}"></strong></span>
     <span class="epidemic-item">🔥 Ritme d'infecció: <strong th:text="${epidemicData.infectionRate}"></strong></span>
     <span class="epidemic-item">⏱️ Torns des de l'última epidèmia: <strong th:text="${epidemicData.turnsSinceLastEpidemic}"></strong></span>
     <span class="epidemic-item">📅 Partida: <strong th:text="${game}"></strong></span>
 </div>
+
+<!-- Cities that can be drawn from the bottom of the deck in the next epidemic -->
+<div class="epidemic-risk" th:if="${!#lists.isEmpty(epidemicRisk)}">
+    <div class="epidemic-risk-title">⚠️ Propera epidèmia: ciutat del fons de la pila</div>
+    <div class="epidemic-risk-list">
+        <span class="epidemic-risk-city" th:each="risk : ${epidemicRisk}"
+              th:style="'--card-color:' + ${risk.color}"
+              th:title="${risk.cardsAtBottom} + ' carta/es al fons de la pila'">
+            <span class="epidemic-risk-name" th:text="${risk.city}"></span>
+            <strong th:text="${#numbers.formatDecimal(risk.probability * 100, 0, 0)} + '%'"></strong>
+        </span>
+    </div>
+</div>
+</details>
 
 <!-- Actions taken during play -->
 <div class="toolbar">
@@ -41,19 +66,6 @@
     <strong>Revisa:</strong>
     <ul class="warnings"><li th:each="warning : ${warnings}" th:text="${warning}"></li></ul>
     <a th:href="@{/campanya/graella}">Obrir la graella de correccions</a>
-</div>
-
-<!-- Cities that can be drawn from the bottom of the deck in the next epidemic -->
-<div class="epidemic-risk" th:if="${!#lists.isEmpty(epidemicRisk)}">
-    <div class="epidemic-risk-title">⚠️ Propera epidèmia: ciutat del fons de la pila</div>
-    <div class="epidemic-risk-list">
-        <span class="epidemic-risk-city" th:each="risk : ${epidemicRisk}"
-              th:style="'--card-color:' + ${risk.color}"
-              th:title="${risk.cardsAtBottom} + ' carta/es al fons de la pila'">
-            <span class="epidemic-risk-name" th:text="${risk.city}"></span>
-            <strong th:text="${#numbers.formatDecimal(risk.probability * 100, 0, 0)} + '%'"></strong>
-        </span>
-    </div>
 </div>
 
 <div class="piles">
@@ -99,5 +111,15 @@
     </div>
 </div>
 
+<script>
+    // Remember whether the info panel was left open
+    (function () {
+        var panel = document.getElementById('info-panel');
+        try { if (localStorage.getItem('infoPanelOpen') === '1') panel.open = true; } catch (e) {}
+        panel.addEventListener('toggle', function () {
+            try { localStorage.setItem('infoPanelOpen', panel.open ? '1' : '0'); } catch (e) {}
+        });
+    })();
+</script>
 </body>
 </html>
