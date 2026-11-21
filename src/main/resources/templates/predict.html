@@ -16,6 +16,7 @@
         <span>🦠 <strong th:text="${epidemicData.currentEpidemic}"></strong></span>
         <span>🔥 Ritme <strong th:text="${epidemicData.infectionRate}"></strong></span>
         <span>⏱️ Torns <strong th:text="${epidemicData.turnsSinceLastEpidemic}"></strong></span>
+        <span>🃏 Queden <strong th:text="${epidemicData.cardsLeftThisTurn}"></strong></span>
         <span th:if="${!#lists.isEmpty(epidemicRisk)}">⚠️ Fons: <strong th:text="${epidemicRisk[0].city} + ' ' + ${#numbers.formatDecimal(epidemicRisk[0].probability * 100, 0, 0)} + '%'"></strong></span>
     </span>
 </summary>
@@ -23,6 +24,7 @@
     <span class="epidemic-item">🦠 Epidèmia actual: <strong th:text="${epidemicData.currentEpidemic}"></strong></span>
     <span class="epidemic-item">🔥 Ritme d'infecció: <strong th:text="${epidemicData.infectionRate}"></strong></span>
     <span class="epidemic-item">⏱️ Torns des de l'última epidèmia: <strong th:text="${epidemicData.turnsSinceLastEpidemic}"></strong></span>
+    <span class="epidemic-item" title="El % de cada carta compta només aquestes cartes">🃏 Cartes per robar aquest torn: <strong th:text="${epidemicData.cardsLeftThisTurn}"></strong></span>
     <span class="epidemic-item">📅 Partida: <strong th:text="${game}"></strong></span>
 </div>
 

@@ -37,6 +37,7 @@ public class PredictInfectionDeckController {
 
     @GetMapping("/")
     public String getPrediction(@RequestParam(required = false) String mode, Model model) {
+
         Optional<Campaign> current = campaignService.current();
         if (!current.isPresent()) {
             model.addAttribute("spreadsheetId", campaignService.getSpreadsheetId());
@@ -52,7 +53,7 @@ public class PredictInfectionDeckController {
         InfectionDeckData infectionDeckData = InfectionDeckData.createFromInfectionCardData(cardsInGame);
         List<InfectionSet> infectionSetsInDeck = infectionDeckData.getPossibleCardsForNextInfectionDraws();
         EpidemicStatusData epidemicStatusData = new EpidemicStatusData(infectionDeckData);
-        Map<String, Double> cityInfectionProbability = InfectionDeckData.rankCitiesByInfectionRisk(infectionSetsInDeck, epidemicStatusData.getInfectionRate());
+        Map<String, Double> cityInfectionProbability = InfectionDeckData.rankCitiesByInfectionRisk(infectionSetsInDeck, epidemicStatusData.getCardsLeftThisTurn());
 
         model.addAttribute("infectionDiscarded", infectionDeckData.getInfectionCardsInCurrentEpidemic());
         model.addAttribute("infectionSets", infectionSetsInDeck);

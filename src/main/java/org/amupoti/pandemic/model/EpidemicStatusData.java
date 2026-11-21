@@ -12,12 +12,21 @@ public class EpidemicStatusData {
     String currentEpidemic;
     int turnsSinceLastEpidemic;
     int infectionRate;
+    /**
+     * Cards still to be drawn in the current infection step: the rest of the turn, or of the initial infection
+     * while it is being entered. A finished turn means a whole new turn is next.
+     */
+    int cardsLeftThisTurn;
 
     public EpidemicStatusData(InfectionDeckData infectionDeckData) {
         int currentEpidemicNumber = infectionDeckData.getCurrentEpidemic();
         this.currentEpidemic = formatEpidemic(currentEpidemicNumber);
-        turnsSinceLastEpidemic = computeTurns(currentEpidemicNumber, infectionDeckData.getInfectionCardsInCurrentEpidemic());
         infectionRate = InfectionRate.getRateForEpidemic(currentEpidemicNumber);
+        int cardsDrawnInTurns = cardsDrawnInTurns(currentEpidemicNumber, infectionDeckData.getInfectionCardsInCurrentEpidemic());
+        turnsSinceLastEpidemic = Math.max(0, cardsDrawnInTurns) / infectionRate;
+        cardsLeftThisTurn = cardsDrawnInTurns < 0
+                ? -cardsDrawnInTurns
+                : infectionRate - cardsDrawnInTurns % infectionRate;
     }
 
     private String formatEpidemic(int currentEpidemic) {
@@ -27,11 +36,14 @@ public class EpidemicStatusData {
         return "" + currentEpidemic;
     }
 
-    private int computeTurns(int currentEpidemic, InfectionSet infectionCardsInCurrentEpidemic) {
+    /**
+     * @return cards drawn in turns since the last epidemic, or minus the cards still missing from the initial infection
+     */
+    private int cardsDrawnInTurns(int currentEpidemic, InfectionSet infectionCardsInCurrentEpidemic) {
         int cards = (int) infectionCardsInCurrentEpidemic.getCardsInEpidemic().stream()
                 .filter(not(InfectionCard::isSoulless))
                 .count();
         if (currentEpidemic == 0) cards -= INITIAL_INFECTION_CARDS;
-        return Math.max(0, cards) / InfectionRate.getRateForEpidemic(currentEpidemic);
+        return cards;
     }
 }
