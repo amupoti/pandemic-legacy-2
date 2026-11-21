@@ -56,7 +56,8 @@ public class PredictInfectionDeckController {
         Map<String, Double> cityInfectionProbability = InfectionDeckData.rankCitiesByInfectionRisk(infectionSetsInDeck, epidemicStatusData.getCardsLeftThisTurn());
 
         model.addAttribute("infectionDiscarded", infectionDeckData.getInfectionCardsInCurrentEpidemic());
-        model.addAttribute("infectionSets", infectionSetsInDeck);
+        model.addAttribute("infectionSets", InfectionDeckData.sortByInfectionRisk(infectionSetsInDeck, cityInfectionProbability));
+        model.addAttribute("pileOrigins", infectionDeckData.getOriginsOfNextInfectionDraws());
         model.addAttribute("epidemicData", epidemicStatusData);
         model.addAttribute("probability", cityInfectionProbability);
         model.addAttribute("epidemicRisk", InfectionDeckData.rankCitiesByEpidemicRisk(infectionSetsInDeck));

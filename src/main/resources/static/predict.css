@@ -666,3 +666,16 @@ form.Card:active { transform: scale(0.98); }
 .topbar .btn-undo:hover, .topbar .btn-icon:hover { border-color: #f2efe6; }
 
 .stat-label { font-size: 13px; color: #cfc8bd; }
+
+/* Where each pile comes from, with the top one (drawn now) and the bottom one (next epidemic) marked */
+.pile-tag {
+    font: 600 11px/1 'Open Sans', Arial, sans-serif;
+    text-transform: none;
+    letter-spacing: 0;
+    padding: 3px 6px;
+    border-radius: 4px;
+    background: #e4dfd4;
+    color: #4a4a4a;
+}
+.pile-tag-top { background: #2b2522; color: #f2efe6; }
+.predict-page .pile-top .separator { background-color: #2b2522; }

@@ -118,6 +118,56 @@ class InfectionDeckDataTest {
         assertThat(new EpidemicStatusData(deck).getTurnsSinceLastEpidemic()).isZero();
     }
 
+    @Test
+    void sortsTheCardsOfEachSetByRiskAndThenByName() {
+        List<InfectionSet> sets = Collections.singletonList(set("Alpha", "Beta", "Gamma", "Delta"));
+        Map<String, Double> probabilities = new java.util.HashMap<>();
+        probabilities.put("Beta", 0.5);
+        probabilities.put("Delta", 0.5);
+        probabilities.put("Gamma", 0.9);
+
+        List<InfectionSet> sorted = InfectionDeckData.sortByInfectionRisk(sets, probabilities);
+
+        assertThat(sorted.get(0).getCardsInEpidemic())
+                .extracting(InfectionCard::getCityName)
+                .containsExactly("Gamma", "Beta", "Delta", "Alpha");
+        assertThat(sets.get(0).getCardsInEpidemic())
+                .extracting(InfectionCard::getCityName)
+                .as("the original sets are left as they were")
+                .containsExactly("Alpha", "Beta", "Gamma", "Delta");
+    }
+
+    @Test
+    void namesWhereEachSetOfTheDeckComesFrom() {
+        // Periods: initial infection, epidemic 1, epidemic 2 (current, so in the discard pile).
+        // Each set is named after the phase its cards were last drawn in, like the columns of the grid
+        List<InfectionCard> cards = Arrays.asList(
+                drawnIn("Never", false, false, false),
+                drawnIn("Initial", true, false, false),
+                drawnIn("FirstEpidemic", true, true, false),
+                drawnIn("Discarded", false, false, true));
+
+        InfectionDeckData deck = InfectionDeckData.createFromInfectionCardData(cards);
+
+        assertThat(deck.getOriginsOfNextInfectionDraws()).containsExactly("Epidèmia 1", "Infecció inicial", "Mai robades");
+        assertThat(deck.getPossibleCardsForNextInfectionDraws())
+                .extracting(set -> set.getCardsInEpidemic().get(0).getCityName())
+                .containsExactly("FirstEpidemic", "Initial", "Never");
+    }
+
+    @Test
+    void theInitialInfectionHasItsOwnName() {
+        assertThat(InfectionDeckData.originName(1)).isEqualTo("Infecció inicial");
+        assertThat(InfectionDeckData.originName(4)).isEqualTo("Epidèmia 3");
+    }
+
+    private static InfectionCard drawnIn(String cityName, Boolean... periods) {
+        List<Boolean> appearances = new java.util.ArrayList<>();
+        appearances.add(true);
+        appearances.addAll(Arrays.asList(periods));
+        return new InfectionCard(0, cityName, "", true, false, false, new InfectionCardAppearances(appearances), "");
+    }
+
     private static InfectionSet set(String... cityNames) {
         return new InfectionSet(Arrays.stream(cityNames)
                 .map(InfectionDeckDataTest::card)

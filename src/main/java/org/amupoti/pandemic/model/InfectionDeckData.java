@@ -91,6 +91,40 @@ public class InfectionDeckData {
         return cardsForNextInfection;
     }
 
+    /**
+     * @return where each set of {@link #getPossibleCardsForNextInfectionDraws()} comes from, in the same order:
+     * the epidemic or initial infection that shuffled it on top of the deck, or the cards never drawn
+     */
+    public List<String> getOriginsOfNextInfectionDraws() {
+        List<String> origins = new ArrayList<>();
+        for (int set = remainingCardsInSets.size() - 2; set >= 0; set--) {
+            if (!remainingCardsInSets.get(set).getCardsInEpidemic().isEmpty()) origins.add(originName(set));
+        }
+        return origins;
+    }
+
+    /**
+     * Set 0 holds the cards never drawn, set 1 the initial infection and set n the epidemic n - 1
+     */
+    static String originName(int set) {
+        if (set == 0) return "Mai robades";
+        if (set == 1) return "Infecció inicial";
+        return "Epidèmia " + (set - 1);
+    }
+
+    /**
+     * @return copies of the sets with their cards sorted by infection risk (highest first) and then by name,
+     * so the cards that can be drawn now are at the top of each set
+     */
+    public static List<InfectionSet> sortByInfectionRisk(List<InfectionSet> sets, Map<String, Double> probabilityByCard) {
+        Comparator<InfectionCard> byRisk = Comparator
+                .comparingDouble((InfectionCard card) -> probabilityByCard.getOrDefault(card.getCityName(), 0.0))
+                .reversed()
+                .thenComparing(InfectionCard::getCityName);
+        return sets.stream()
+                .map(set -> new InfectionSet(set.getCardsInEpidemic().stream().sorted(byRisk).collect(Collectors.toList())))
+                .collect(Collectors.toList());
+    }
 
     public static Map<String, Double> rankCitiesByInfectionRisk(List<InfectionSet> remainingSets, int infectionRate) {
         Map<String, Integer> cityToTotalCount = new HashMap<>();

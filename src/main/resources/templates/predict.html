@@ -43,9 +43,14 @@
     <!-- Infection deck, from top to bottom -->
     <div class="pile-column">
         <div class="pile" th:each="infectionSet, setStat : ${infectionSets}"
-             th:classappend="${setStat.last} ? 'pile-bottom'">
+             th:classappend="${setStat.first ? 'pile-top' : ''} + ' ' + ${setStat.last ? 'pile-bottom' : ''}">
             <div class="section-header">
-                <span class="title" th:text="${setStat.last} ? 'Fons de la pila' : 'Pila d\'infecció'">Pila d'infecció</span>
+                <span class="title" th:text="${pileOrigins[setStat.index]}"
+                      th:title="${pileOrigins[setStat.index] == 'Mai robades'} ? 'Cartes que encara no han sortit mai' : 'Cartes robades per última vegada a la fase ' + ${pileOrigins[setStat.index]} + ', com a la graella'">Epidèmia 1</span>
+                <span class="pile-tag pile-tag-top" th:if="${setStat.first}"
+                      title="Les cartes d'aquesta pila són les que es roben ara">Es roba d'aquí</span>
+                <span class="pile-tag" th:if="${setStat.last}"
+                      title="La propera epidèmia treu la carta del fons d'aquesta pila">Fons</span>
                 <span class="card-count-inline" th:text="${#lists.size(infectionSet.cardsInEpidemic)}"></span>
             </div>
             <div class="separator"></div>
